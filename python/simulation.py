@@ -12,7 +12,7 @@ from level import Level
 from material import Material
 from beam import Beam
 
-wood = Material(100, 200, None, 5, 10, 1)
+wood = Material(100, 999, None, 5, 1, 1, (164,116,73, 255))
 
 class Simulation:
     w = 600
@@ -37,7 +37,7 @@ class Simulation:
         self.level = Level(self.space, self.w, self.h)
 
         # Add temporary bridge for testing
-        wood = Material(100, 999, None, 5, 1, 1, (164,116,73, 255))
+        
         beam = Beam(wood, Vec2d(90, 210), Vec2d(self.w - 90, 210))
         beam.createBody(self.space)
 
