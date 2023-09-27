@@ -8,7 +8,6 @@ class Beam:
     start: Vec2d
     end: Vec2d
 
-
     def __init__(self, material, start, end):
         self.material = material
 
@@ -16,10 +15,10 @@ class Beam:
         self.end = end
         self.sortPoints()
 
-        
-
     def sortPoints(self):
-        if self.end.x < self.start.x or (self.end.x == self.start.x and self.end.y < self.start.y):
+        if self.end.x < self.start.x or (
+            self.end.x == self.start.x and self.end.y < self.start.y
+        ):
             self.start, self.end = self.end, self.start
 
     def createBody(self, space):
@@ -29,7 +28,6 @@ class Beam:
             print("Warning: Beam is too long. It will not be added")
             return
 
-
         volume = self.material.thickness * length
         mass = self.material.density * volume
 
@@ -37,24 +35,18 @@ class Beam:
         normalized = diff.normalized()
         rotated = normalized.rotated_degrees(90)
 
+        middle = self.start + diff / 2
+
         points = [
-            rotated * self.material.thickness / 2,
-            diff + rotated * self.material.thickness / 2,
-            diff - rotated * self.material.thickness / 2,
-            - rotated * self.material.thickness / 2
+            -diff / 2 + rotated * self.material.thickness / 2,
+            diff / 2 + rotated * self.material.thickness / 2,
+            diff / 2 - rotated * self.material.thickness / 2,
+            -diff / 2 - rotated * self.material.thickness / 2,
         ]
 
         body = pymunk.Body(mass, pymunk.moment_for_poly(mass, points))
-        body.position = self.start
+        body.position = middle
         shape = pymunk.Poly(body, points)
         shape.friction = self.material.friction
         space.add(body, shape)
         return
-
-
-        bridge_b = pymunk.Body(100, pymunk.moment_for_poly(100, bridge_points))
-        bridge_b.position = Vec2d(self.w / 2, 200)
-        bridge_s = pymunk.Poly(bridge_b, bridge_points)
-
-        bridge_s.friction = 1
-        self.space.add(bridge_b, bridge_s)

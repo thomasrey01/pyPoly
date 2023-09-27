@@ -46,34 +46,9 @@ class Simulation:
         bridge_s.friction = 1
         self.space.add(bridge_b, bridge_s)
 
-        wood = Material(100, 200, None, 5, 10, 1)
+        wood = Material(100, 200, None, 5, 1, 1)
         beam = Beam(wood, Vec2d(400, 400), Vec2d(500, 500))
         beam.createBody(self.space)
-
-        """
-        ### pyramid
-        x = Vec2d(-270, 7.5) + (300, 250)
-        y = Vec2d(0, 0)
-        deltaX = Vec2d(0.5625, 1.1) * 20
-        deltaY = Vec2d(1.125, 0.0) * 20
-
-        for i in range(25):
-            y = Vec2d(*x)
-            for j in range(i, 25):
-                size = 10
-                points = [(-size, -size), (-size, size), (size, size), (size, -size)]
-                mass = 1.0
-                moment = pymunk.moment_for_poly(mass, points, (0, 0))
-                body = pymunk.Body(mass, moment)
-                body.position = y
-                shape = pymunk.Poly(body, points)
-                shape.friction = 1
-                self.space.add(body, shape)
-
-                y += deltaY
-
-            x += deltaX
-        """
 
         ### draw options for drawing
         pymunk.pygame_util.positive_y_is_up = True
@@ -105,7 +80,7 @@ class Simulation:
             x = pos[0] + (spacing - pos[0] % spacing)
         else:
             x = pos[0] - pos[0] % spacing
-        
+
         if pos[1] % spacing > spacing // 2:
             y = pos[1] + (spacing - pos[1] % spacing)
         else:
@@ -134,7 +109,6 @@ class Simulation:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # self.add_body(pygame.mouse.get_pos())
                 self.select_point(pygame.mouse.get_pos())
-
 
         fps = 30.0
         dt = 1.0 / 100
