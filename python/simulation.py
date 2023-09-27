@@ -33,18 +33,9 @@ class Simulation:
         # Init level
         self.level = Level(self.space, self.w, self.h)
 
-        # temporary bridge
-        bridge_points = [(-210, 0), (-210, 5), (210, 5), (210, 0)]
-
-        bridge_b = pymunk.Body(100, pymunk.moment_for_poly(100, bridge_points))
-        bridge_b.position = Vec2d(self.w / 2, 200)
-        bridge_s = pymunk.Poly(bridge_b, bridge_points)
-
-        bridge_s.friction = 1
-        self.space.add(bridge_b, bridge_s)
-
-        wood = Material(100, 200, None, 5, 1, 1)
-        beam = Beam(wood, Vec2d(400, 400), Vec2d(500, 500))
+        # Add temporary bridge for testing
+        wood = Material(100, 999, None, 5, 1, 1, (164,116,73, 255))
+        beam = Beam(wood, Vec2d(90, 210), Vec2d(self.w - 90, 210))
         beam.createBody(self.space)
 
         ### draw options for drawing

@@ -1,6 +1,8 @@
 import pymunk
-from car import Car
+from pymunk import Vec2d
 
+from car import Car
+from goal import Goal
 
 class Level:
 
@@ -17,6 +19,8 @@ class Level:
     bridge_joints = [(90, 200), (210, 0)]
 
     car: Car
+
+    goal: Goal
 
     def __init__(self, space: pymunk.Space, width, height):
         ground_points = [
@@ -45,6 +49,11 @@ class Level:
 
         # Ball / car
         self.car = Car(space)
+
+        # Goal
+        goal_position = Vec2d(300, 300)
+        self.goal = Goal(goal_position, space)
+
 
         for i in range(0, width, self.point_spacing):
             for j in range(0, height, self.point_spacing):

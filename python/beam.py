@@ -48,5 +48,6 @@ class Beam:
         body.position = middle
         shape = pymunk.Poly(body, points)
         shape.friction = self.material.friction
+        shape.color = self.material.color
         space.add(body, shape)
         return
