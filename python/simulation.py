@@ -12,6 +12,8 @@ from level import Level
 from material import Material
 from beam import Beam
 
+wood = Material(100, 200, None, 5, 10, 1)
+
 class Simulation:
     w = 600
     h = 600
@@ -21,6 +23,8 @@ class Simulation:
         self.drawing = True
 
         self.selected_point_body = None
+
+        self.sim_running = False
 
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.clock = pygame.time.Clock()
@@ -93,7 +97,8 @@ class Simulation:
         while self.running:
             self.loop()
     
-    def select_point(self, pos):
+    def select_point(self, mouse_pos):
+        pos = (mouse_pos[0], self.h - mouse_pos[1])
         spacing = self.level.point_spacing
         x, y = 0, 0
         if pos[0] % spacing > spacing // 2:
@@ -106,11 +111,14 @@ class Simulation:
         else:
             y = pos[1] - pos[1] % spacing
         
-        joint_point = (x, y)
+        joint_point = Vec2d(x, y)
 
         if self.selected_point_body == None:
-            self.selected_point_body = self.level.get_static_joint(joint_point)
-        print(self.selected_point_body)
+            self.selected_point_body = joint_point
+        else:
+            beam = Beam(wood, self.selected_point_body, joint_point)
+            beam.createBody(self.space)
+            self.selected_point_body = None
 
     def loop(self):
         for event in pygame.event.get():
@@ -118,6 +126,8 @@ class Simulation:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.sim_running = not self.sim_running
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
             # Left mouse button
@@ -128,7 +138,8 @@ class Simulation:
 
         fps = 30.0
         dt = 1.0 / 100
-        self.space.step(dt)
+        if self.sim_running:
+            self.space.step(dt)
         if self.drawing:
             self.draw()
 
