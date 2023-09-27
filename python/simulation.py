@@ -18,6 +18,9 @@ class Simulation:
     def __init__(self):
         self.running = True
         self.drawing = True
+
+        self.selected_point_body = None
+
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.clock = pygame.time.Clock()
 
@@ -84,6 +87,25 @@ class Simulation:
     def run(self):
         while self.running:
             self.loop()
+    
+    def select_point(self, pos):
+        spacing = self.level.point_spacing
+        x, y = 0, 0
+        if pos[0] % spacing > spacing // 2:
+            x = pos[0] + (spacing - pos[0] % spacing)
+        else:
+            x = pos[0] - pos[0] % spacing
+        
+        if pos[1] % spacing > spacing // 2:
+            y = pos[1] + (spacing - pos[1] % spacing)
+        else:
+            y = pos[1] - pos[1] % spacing
+        
+        joint_point = (x, y)
+
+        if self.selected_point_body == None:
+            self.selected_point_body = self.level.get_static_joint(joint_point)
+        print(self.selected_point_body)
 
     def loop(self):
         for event in pygame.event.get():
@@ -95,7 +117,9 @@ class Simulation:
                 self.drawing = not self.drawing
             # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.add_body(pygame.mouse.get_pos())
+                # self.add_body(pygame.mouse.get_pos())
+                self.select_point(pygame.mouse.get_pos())
+
 
         fps = 30.0
         dt = 1.0 / 100
