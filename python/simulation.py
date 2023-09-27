@@ -8,29 +8,37 @@ import pymunk
 import pymunk.pygame_util
 from pymunk import Vec2d
 
+from level import Level
 
-class PyramidDemo:
+
+class Simulation:
+    w = 600
+    h = 600
+
     def __init__(self):
         self.running = True
         self.drawing = True
-        self.w, self.h = 600, 600
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.clock = pygame.time.Clock()
 
         ### Init pymunk and create space
         self.space = pymunk.Space()
-        self.space.gravity = (0.0, -900.0)
-        self.space.sleep_time_threshold = 0.3
-        ### ground
+        self.space.gravity = (0.0, -981.0)
 
-        left = pymunk.Poly(self.space.static_body, [(0,0), (0, 200), (100, 200), (100, 0)])
-        left.friction = 1.0
-        self.space.add(left)
+        # Init level
+        self.level = Level(self.space, self.w, self.h)
 
-        right = pymunk.Poly(self.space.static_body, [(self.w, 0), (self.w, 200), (self.w - 100, 200), (self.w - 100, 0)])
-        right.friction = 1.0
-        self.space.add(right)
+        # temporary bridge
+        bridge_points = [(-210, 0), (-210, 5), (210, 5), (210, 0)]
 
+        bridge_b = pymunk.Body(100, pymunk.moment_for_poly(100, bridge_points))
+        bridge_b.position = Vec2d(self.w / 2, 200)
+        bridge_s = pymunk.Poly(bridge_b, bridge_points)
+
+        bridge_s.friction = 1
+        self.space.add(bridge_b, bridge_s)
+
+        """
         ### pyramid
         x = Vec2d(-270, 7.5) + (300, 250)
         y = Vec2d(0, 0)
@@ -53,6 +61,7 @@ class PyramidDemo:
                 y += deltaY
 
             x += deltaX
+        """
 
         ### draw options for drawing
         pymunk.pygame_util.positive_y_is_up = True
@@ -72,8 +81,6 @@ class PyramidDemo:
         shape.friction = 1
         self.space.add(body, shape)
 
-
-
     def run(self):
         while self.running:
             self.loop()
@@ -84,15 +91,14 @@ class PyramidDemo:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-                pygame.image.save(self.screen, "box2d_pyramid.png")
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
+            # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.add_body(pygame.mouse.get_pos())
 
-        fps = 60.0
-        dt = 1.0 / fps / 5
+        fps = 30.0
+        dt = 1.0 / 100
         self.space.step(dt)
         if self.drawing:
             self.draw()
@@ -113,7 +119,7 @@ class PyramidDemo:
 
 
 def main():
-    demo = PyramidDemo()
+    demo = Simulation()
     demo.run()
 
 
