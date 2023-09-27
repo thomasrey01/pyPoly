@@ -9,7 +9,8 @@ import pymunk.pygame_util
 from pymunk import Vec2d
 
 from level import Level
-
+from material import Material
+from beam import Beam
 
 class Simulation:
     w = 600
@@ -40,6 +41,10 @@ class Simulation:
 
         bridge_s.friction = 1
         self.space.add(bridge_b, bridge_s)
+
+        wood = Material(100, 200, None, 5, 10, 1)
+        beam = Beam(wood, Vec2d(400, 400), Vec2d(500, 500))
+        beam.createBody(self.space)
 
         """
         ### pyramid
