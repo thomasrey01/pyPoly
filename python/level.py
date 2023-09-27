@@ -64,8 +64,8 @@ class Level:
                 point_s.sensor = True
 
                 space.add(point_b, point_s)
-                self.static_joints[point_b.position] = point_b
-
+                self.static_joints[(i, j)] = (point_b, point_s)
+        
     def get_static_joint(self, pos):
         return self.static_joints[pos]
         
