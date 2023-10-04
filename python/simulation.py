@@ -9,10 +9,10 @@ import pymunk.pygame_util
 from pymunk import Vec2d
 
 from level import Level
-from material import Material
 from beam import Beam
+from builder import Builder
+from materiallist import material_list
 
-wood = Material(100, 999, None, 5, 1, 1, (164,116,73, 255))
 
 class Simulation:
     w = 600
@@ -37,13 +37,16 @@ class Simulation:
         self.level = Level(self.space, self.w, self.h)
 
         # Add temporary bridge for testing
-        
-        beam = Beam(wood, Vec2d(90, 210), Vec2d(self.w - 90, 210))
-        beam.createBody(self.space)
+        #beam = Beam(material_list["wood"], Vec2d(90, 210), Vec2d(self.w - 90, 210))
+        #beam.createBody(self.space)
 
         ### draw options for drawing
         pymunk.pygame_util.positive_y_is_up = True
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
+
+        builder = Builder()
+        builder.simple_bridge(Vec2d(2, 5), 11)
+        builder.build_bridge(self.add_beam_to_grid)
 
     def add_body(self, pos):
         size = 10
@@ -62,7 +65,15 @@ class Simulation:
     def run(self):
         while self.running:
             self.loop()
-    
+
+    def add_beam_to_grid(self, material, grid_p1, grid_p2):
+        beam = Beam(
+            material,
+            grid_p1 * self.level.point_spacing,
+            grid_p2 * self.level.point_spacing,
+        )
+        beam.createBody(self.space)
+
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])
         spacing = self.level.point_spacing
@@ -76,13 +87,13 @@ class Simulation:
             y = pos[1] + (spacing - pos[1] % spacing)
         else:
             y = pos[1] - pos[1] % spacing
-        
+
         joint_point = Vec2d(x, y)
 
         if self.selected_point_body == None:
             self.selected_point_body = joint_point
         else:
-            beam = Beam(wood, self.selected_point_body, joint_point)
+            beam = Beam(material_list["wood"], self.selected_point_body, joint_point)
             beam.createBody(self.space)
             self.selected_point_body = None
 
