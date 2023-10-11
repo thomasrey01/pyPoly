@@ -18,6 +18,9 @@ class Simulation:
     w = 600
     h = 600
 
+    beam_dict = {}
+    pivots = []
+
     def __init__(self):
         self.running = True
         self.drawing = True
@@ -91,7 +94,31 @@ class Simulation:
         else:
             beam = Beam(material_list["wood"], self.selected_point_body, joint_point)
             beam.createBody(self.space)
+            
+            self.add_beam_to_dict(beam, joint_point, self.selected_point_body)
+
             self.selected_point_body = None
+    
+    def add_beam_to_dict(self, beam, point1, point2):
+        if point1 in self.beam_dict:
+            self.beam_dict[point1].append(beam)
+        else:
+            self.beam_dict[point1] = [beam]
+        
+        if point2 in self.beam_dict:
+            self.beam_dict[point2].append(beam)
+        else:
+            self.beam_dict[point2] = [beam]
+    
+    def add_anchors(self):
+        for point in self.beam_dict:
+            beam_list = self.beam_dict[point]
+            for i in range(len(beam_list) - 1):
+                for j in range(i + 1, len(beam_list)):
+                    beam1, beam2 = beam_list[i], beam_list[j]
+                    joint = pymunk.PinJoint(beam1.body, beam2.body, point, point)
+                    print(joint)
+                    self.space.add(joint)
 
     def loop(self):
         for event in pygame.event.get():
@@ -100,7 +127,8 @@ class Simulation:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.sim_running = not self.sim_running
+                self.add_anchors()
+                self.sim_running = True
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
             # Left mouse button

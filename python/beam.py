@@ -9,6 +9,8 @@ class Beam:
     start: Vec2d
     end: Vec2d
 
+    body = None
+
     def __init__(self, material, start, end):
         self.material = material
 
@@ -53,4 +55,4 @@ class Beam:
         shape.filter = pymunk.ShapeFilter(categories=collision_categories[self.material.name], mask=collision_types[self.material.name])
 
         space.add(body, shape)
-        return
+        self.body = body
