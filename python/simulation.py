@@ -28,6 +28,8 @@ class Simulation:
 
         self.first_time = True
 
+        self.beam_list = []
+
         self.selected_point_body = None
 
         self.sim_running = False
@@ -78,6 +80,7 @@ class Simulation:
         )
         beam.createBody(self.space)
         self.add_beam_to_dict(beam, beam.start, beam.end)
+        self.beam_list.append(beam)
 
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])
@@ -103,6 +106,7 @@ class Simulation:
             beam.createBody(self.space)
             
             self.add_beam_to_dict(beam, joint_point, self.selected_point_body)
+            self.beam_list.append(beam)
 
             self.selected_point_body = None
     
@@ -118,13 +122,25 @@ class Simulation:
             self.beam_dict[point2] = [beam]
     
     def add_anchors(self):
+
+        for beam in self.beam_list:
+            x, y = beam.body.position[0], beam.body.position[1]
+            ground = None
+            if x <= 100 and y <= 200:
+                ground = self.level.ground_pieces[0]
+            elif x >= self.w - 100 and y <= 200:
+                ground = self.level.ground_pieces[1]
+            else:
+                continue
+
+            PivotJoint(self.space, ground.body, beam.body, beam.body.position)
+
         for point in self.beam_dict:
             beam_list = self.beam_dict[point]
             for i in range(len(beam_list) - 1):
                 for j in range(i + 1, len(beam_list)):
                     beam1, beam2 = beam_list[i], beam_list[j]
-                    PivotJoint(self.space, beam1, beam2, point)
-                    # self.space.add(joint)
+                    PivotJoint(self.space, beam1.body, beam2.body, point)
 
     def loop(self):
         for event in pygame.event.get():

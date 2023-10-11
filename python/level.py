@@ -25,12 +25,12 @@ class Level:
 
     def __init__(self, space: pymunk.Space, width, height):
         ground_points = [
-            [(0, 0), (0, 200), (100, 200), (100, 0)],
+            [(0, 0), (0, 200), (120, 200), (120, 0)],
             [
                 (width, 0),
                 (width, 200),
-                (width - 100, 200),
-                (width - 100, 0),
+                (width - 120, 200),
+                (width - 120, 0),
             ],
         ]
 
