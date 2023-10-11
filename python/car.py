@@ -1,5 +1,5 @@
 import pymunk
-from collisions import collision_types, collision_masks, collision_categories
+from collisions import *
 
 class Car:
     mass = 10
@@ -8,7 +8,6 @@ class Car:
     speed = 10
     friction = 1
     max_force = 100000
-    collision_type = collision_types["car"]
 
     def __init__(self, space, position=None):
         self.body = pymunk.Body(self.mass, self.radius)
@@ -19,7 +18,7 @@ class Car:
 
         self.shape = pymunk.Circle(self.body, 10, (0, 0))
         self.shape.friction = self.friction
-        self.shape.filter = pymunk.ShapeFilter(categories=collision_categories["car"], mask=collision_types["car"])
+        self.shape.filter = pymunk.ShapeFilter(categories=collision_categories["car"], mask=collision_masks["car"])
         space.add(self.body, self.shape)
 
         self.motor = pymunk.SimpleMotor(self.body, space.static_body, -self.speed)
