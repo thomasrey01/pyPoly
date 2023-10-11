@@ -44,10 +44,6 @@ class Simulation:
         # Init level
         self.level = Level(self.space, self.w, self.h)
 
-        # Add temporary bridge for testing
-        #beam = Beam(material_list["wood"], Vec2d(90, 210), Vec2d(self.w - 90, 210))
-        #beam.createBody(self.space)
-
         ### draw options for drawing
         pymunk.pygame_util.positive_y_is_up = True
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)

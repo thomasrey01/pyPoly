@@ -3,6 +3,7 @@ from pymunk import Vec2d
 
 from car import Car
 from goal import Goal
+from collisions import collision_types
 
 class Level:
 
@@ -36,6 +37,8 @@ class Level:
         for ground in ground_points:
             ground_piece = pymunk.Poly(space.static_body, ground)
             ground_piece.friction = self.ground_friction
+            ground_piece.collision_type = collision_types["ground"]
+
             space.add(ground_piece)
             self.ground_pieces.append(ground_piece)
         

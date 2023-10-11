@@ -15,6 +15,13 @@ Wood, bridge. Bridge has weight, wood does not (?). Joints also have weight.
 
 Collision matrix:
 
+0: Ground
+1: Car
+2: Bridge / asphalt
+3: Wood
+4: Joint
+
+
 |           | Ground    | Car   | Bridge    | Wood  | Joint     |
 |-----------|-----------|-------|-----------|-------|-----------|
 | Ground    |           | X     |           |       | X         |
