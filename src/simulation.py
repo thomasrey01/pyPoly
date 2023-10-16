@@ -97,7 +97,6 @@ class Simulation:
             y = pos[1] - pos[1] % spacing
 
         joint_point = Vec2d(x, y)
-        print(joint_point)
 
         if self.selected_point_body == None:
             self.selected_point_body = joint_point
@@ -123,20 +122,18 @@ class Simulation:
     
     def add_anchors(self):
 
-        for beam in self.beam_list:
-            x, y = beam.body.position[0], beam.body.position[1]
-            ground = None
-            if x <= 100 and y <= 200:
-                ground = self.level.ground_pieces[0]
-            elif x >= self.w - 100 and y <= 200:
-                ground = self.level.ground_pieces[1]
-            else:
-                continue
-
-            PivotJoint(self.space, ground.body, beam.body, beam.body.position)
-
         for point in self.beam_dict:
+            # Adding anchors to ground first
+
             beam_list = self.beam_dict[point]
+            if point[0] <= 120 and point[1] <= 200:
+                for beam in beam_list:
+                    PivotJoint(self.space, beam.body, self.level.ground_pieces[0].body, point)
+            if point[0] >= self.w - 120 and point[1] <= 200:
+                for beam in beam_list:
+                    PivotJoint(self.space, beam.body, self.level.ground_pieces[1].body, point)
+                
+            # Then to beams themselves
             for i in range(len(beam_list) - 1):
                 for j in range(i + 1, len(beam_list)):
                     beam1, beam2 = beam_list[i], beam_list[j]
