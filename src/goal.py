@@ -1,6 +1,7 @@
 import pymunk
 from pymunk import Vec2d
 
+from car import Car
 
 class Goal:
     # Position of bottom left corner
@@ -40,6 +41,10 @@ class Goal:
 
         for shape in self.shapes:
             shape.sensor = True
+
+    def get_distance(self, car: Car):
+        return self.position.get_distance(car.body.position)
+
 
     def reached_goal(self, shape: pymunk.Shape):
         for goal_piece in self.shapes:

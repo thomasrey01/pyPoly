@@ -60,3 +60,9 @@ class Beam:
 
         space.add(body, shape)
         self.body = body
+
+    def area(self):
+        return self.start.get_distance(self.end) * self.material.thickness
+
+    def cost(self):
+        return self.area() * self.material.cost

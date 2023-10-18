@@ -13,26 +13,27 @@ from level import Level
 from beam import Beam
 from builder import Builder
 from material_properties import material_list
+from fitness import Fitness
+from fitnessrenderer import FitnessRenderer
 
 
 class Simulation:
     w = 600
     h = 600
 
+    running = True
+    drawing = True
+    first_time = True
+    beam_list = []
+    selected_point_body = None
+    sim_running = False
     beam_dict = {}
     pivots = []
+    fitness = Fitness()
+    fitnessRenderer: FitnessRenderer
 
     def __init__(self, bridge_string=None, speed=None):
-        self.running = True
-        self.drawing = True
-
-        self.first_time = True
-
-        self.beam_list = []
-
-        self.selected_point_body = None
-
-        self.sim_running = False
+        pygame.init()
 
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.clock = pygame.time.Clock()
@@ -53,6 +54,10 @@ class Simulation:
         builder = Builder()
         builder.simple_bridge(Vec2d(2, 5), 11)
         builder.build_bridge(self.add_beam_to_grid)
+
+        # Init fitness and fitness renderer
+        self.fitnessRenderer = FitnessRenderer(self.fitness)
+        self.fitness.static_fitness(self.beam_list)
 
     def add_body(self, pos):
         size = 10
@@ -103,23 +108,23 @@ class Simulation:
         else:
             beam = Beam(material_list["wood"], self.selected_point_body, joint_point)
             beam.createBody(self.space)
-            
+
             self.add_beam_to_dict(beam, joint_point, self.selected_point_body)
             self.beam_list.append(beam)
 
             self.selected_point_body = None
-    
+
     def add_beam_to_dict(self, beam, point1, point2):
         if point1 in self.beam_dict:
             self.beam_dict[point1].append(beam)
         else:
             self.beam_dict[point1] = [beam]
-        
+
         if point2 in self.beam_dict:
             self.beam_dict[point2].append(beam)
         else:
             self.beam_dict[point2] = [beam]
-    
+
     def add_anchors(self):
         for point in self.beam_dict:
             # Adding anchors to ground first
@@ -127,11 +132,15 @@ class Simulation:
             beam_list = self.beam_dict[point]
             if point[0] <= 120 and point[1] <= 200:
                 for beam in beam_list:
-                    PivotJoint(self.space, beam.body, self.level.ground_pieces[0].body, point)
+                    PivotJoint(
+                        self.space, beam.body, self.level.ground_pieces[0].body, point
+                    )
             if point[0] >= self.w - 120 and point[1] <= 200:
                 for beam in beam_list:
-                    PivotJoint(self.space, beam.body, self.level.ground_pieces[1].body, point)
-                
+                    PivotJoint(
+                        self.space, beam.body, self.level.ground_pieces[1].body, point
+                    )
+
             # Then to beams themselves
             for i in range(len(beam_list) - 1):
                 for j in range(i + 1, len(beam_list)):
@@ -160,27 +169,32 @@ class Simulation:
         dt = 0.5 / 100
         if self.sim_running:
             self.space.step(dt)
+
+            # Update fitness function
+            self.fitness.dynamic_fitness(dt, self.level.car, self.level.goal)
         if self.drawing:
             self.draw()
 
-        ### Tick clock and update fps in title
+        # Tick clock and update fps in title
         self.clock.tick(fps)
         pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
-
-        if(self.level.check_level_complete()):
-            self.running = False 
-            print("SUCCES") #TODO: handle level complete
-
+        if self.level.check_level_complete():
+            self.running = False
+            print("SUCCES")  # TODO: handle level complete
+            print(f"Fitness: {self.fitness.totalFitness:.2f}")
 
     def draw(self):
-        ### Clear the screen
+        # Clear the screen
         self.screen.fill(pygame.Color("white"))
 
-        ### Draw space
+        # Draw space
         self.space.debug_draw(self.draw_options)
 
-        ### All done, lets flip the display
+        # Draw fitness value
+        self.fitnessRenderer.draw(self.screen)
+
+        # All done, lets flip the display
         pygame.display.flip()
 
 
