@@ -1,8 +1,9 @@
 from material import Material
+from material_properties import *
+
 import pymunk
 from pymunk import Vec2d
 
-from collisions import *
 
 class Beam:
     material: Material
@@ -52,7 +53,10 @@ class Beam:
         shape = pymunk.Poly(body, points)
         shape.friction = self.material.friction
         shape.color = self.material.color
-        shape.filter = pymunk.ShapeFilter(categories=collision_categories[self.material.name], mask=collision_masks[self.material.name])
+        shape.filter = pymunk.ShapeFilter(
+            categories=collision_categories[self.material.name],
+            mask=collision_masks[self.material.name],
+        )
 
         space.add(body, shape)
         self.body = body

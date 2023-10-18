@@ -11,7 +11,7 @@ from pymunk import Vec2d
 from level import Level
 from beam import Beam
 from builder import Builder
-from materiallist import material_list
+from material_properties import material_list
 
 
 class Simulation:
@@ -146,6 +146,12 @@ class Simulation:
         ### Tick clock and update fps in title
         self.clock.tick(fps)
         pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
+
+
+        if(self.level.check_level_complete()):
+            self.running = False 
+            print("SUCCES") #TODO: handle level complete
+
 
     def draw(self):
         ### Clear the screen

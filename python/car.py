@@ -1,5 +1,5 @@
 import pymunk
-from collisions import *
+from material_properties import *
 
 class Car:
     mass = 10

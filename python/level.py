@@ -3,7 +3,7 @@ from pymunk import Vec2d
 
 from car import Car
 from goal import Goal
-from collisions import *
+from material_properties import *
 
 class Level:
 
@@ -31,7 +31,7 @@ class Level:
                 (width, 200),
                 (width - 100, 200),
                 (width - 100, 0),
-            ],
+            ]
         ]
 
         for ground in ground_points:
@@ -54,10 +54,10 @@ class Level:
         self.car = Car(space)
 
         # Goal
-        goal_position = Vec2d(300, 300)
+        goal_position = Vec2d(550, 200)
         self.goal = Goal(goal_position, space)
 
-
+        # joint points
         for i in range(0, width, self.point_spacing):
             for j in range(0, height, self.point_spacing):
                 point_b = pymunk.Body(body_type=pymunk.Body.STATIC)
@@ -72,5 +72,6 @@ class Level:
     def get_static_joint(self, pos):
         return self.static_joints[pos]
         
-
+    def check_level_complete(self):
+        return self.goal.reached_goal(self.car.shape)
 
