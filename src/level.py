@@ -72,5 +72,8 @@ class Level:
     def get_static_joint(self, pos):
         return self.static_joints[pos]
         
+    def check_level_complete(self):
 
+        #TODO
+        return False
 
