@@ -1,6 +1,3 @@
-import pymunk
-import math
-
 from beam import Beam
 from car import Car 
 from goal import Goal
@@ -11,13 +8,13 @@ class Fitness:
     weights = {
         "build_cost": -0.1, # Total cost of 
         "instability": -0.1, # movement per time step
-        "car_distance": -1 # min car distance 
+        "car_distance": -10 # min car distance 
         # TODO: structural integrity (breaking stuff)
 
     }
     totalFitness = 0
 
-    min_car_distance = math.inf
+    car_distance = None
 
     def static_fitness(self, beams: [Beam]):
         for beam in beams:
@@ -30,16 +27,15 @@ class Fitness:
         self._update_car_distance(car, goal)
 
     def _update_car_distance(self, car: Car, goal: Goal):
-        new_car_distance = goal.get_distance(car)
+        new_car_distance = car.distance_to_goal(goal)
 
-        if(new_car_distance < self.min_car_distance):
-            if math.isinf(self.min_car_distance):
-                diff = new_car_distance
-            else: 
-                diff = new_car_distance - self.min_car_distance
+        if self.car_distance is None:
+            diff = new_car_distance
+        else: 
+            diff = new_car_distance - self.car_distance
 
-            self.totalFitness += diff * self.weights["car_distance"]
-            self.min_car_distance = new_car_distance
+        self.totalFitness += diff * self.weights["car_distance"]
+        self.car_distance = new_car_distance
 
 
 

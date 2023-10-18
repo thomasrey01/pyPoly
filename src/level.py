@@ -19,11 +19,15 @@ class Level:
 
     bridge_joints = [(90, 200), (210, 0)]
 
+    width: float
+    height: float
     car: Car
-
     goal: Goal
 
     def __init__(self, space: pymunk.Space, width, height):
+        self.width = width
+        self.height = height
+
         ground_points = [
             [(0, 0), (0, 200), (120, 200), (120, 0)],
             [
@@ -73,5 +77,10 @@ class Level:
     def get_static_joint(self, pos):
         return self.static_joints[pos]
 
-    def check_level_complete(self):
-        return self.goal.reached_goal(self.car.shape)
+    # Returns a bool tuple: if level has ended and if it ended successfully
+    def check_level_complete(self) -> (bool, bool):
+        if self.car.has_reached_goal(self.goal):
+            return True, True
+        elif self.car.is_out_of_bounds(self.width, self.height):
+            return True, False
+        return False, False

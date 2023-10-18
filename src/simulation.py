@@ -1,6 +1,9 @@
 """
 Remake of the pyramid demo from the box2d testbed.
 """
+import os
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
 import pygame
 
@@ -47,10 +50,11 @@ class Simulation:
         # Init level
         self.level = Level(self.space, self.w, self.h)
 
-        ### draw options for drawing
+        # draw options for drawing
         pymunk.pygame_util.positive_y_is_up = True
         self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
 
+        # Build simple bridge for testing
         builder = Builder()
         builder.simple_bridge(Vec2d(2, 5), 11)
         builder.build_bridge(self.add_beam_to_grid)
@@ -179,9 +183,16 @@ class Simulation:
         self.clock.tick(fps)
         pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
-        if self.level.check_level_complete():
+        done, success = self.level.check_level_complete()
+
+        if done:
             self.running = False
-            print("SUCCES")  # TODO: handle level complete
+
+            # TODO: handle level complete
+            if success:
+                print("SUCCES")
+            else:
+                print("FAILURE")
             print(f"Fitness: {self.fitness.totalFitness:.2f}")
 
     def draw(self):
