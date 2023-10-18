@@ -6,8 +6,8 @@ class Car:
     radius = 10
     position = (100 / 2, 200 + radius)
     speed = 10
-    friction = 1
-    max_force = 100000
+    friction = 10
+    max_force = 1000000
 
     def __init__(self, space, position=None):
         self.body = pymunk.Body(self.mass, self.radius)

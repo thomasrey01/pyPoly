@@ -7,6 +7,7 @@ import pygame
 import pymunk
 import pymunk.pygame_util
 from pymunk import Vec2d
+from joints import PivotJoint
 
 from level import Level
 from beam import Beam
@@ -21,9 +22,13 @@ class Simulation:
     beam_dict = {}
     pivots = []
 
-    def __init__(self):
+    def __init__(self, bridge_string=None, speed=None):
         self.running = True
         self.drawing = True
+
+        self.first_time = True
+
+        self.beam_list = []
 
         self.selected_point_body = None
 
@@ -35,6 +40,8 @@ class Simulation:
         ### Init pymunk and create space
         self.space = pymunk.Space()
         self.space.gravity = (0.0, -981.0)
+
+        self.b0 = self.space.static_body
 
         # Init level
         self.level = Level(self.space, self.w, self.h)
@@ -72,6 +79,8 @@ class Simulation:
             grid_p2 * self.level.point_spacing,
         )
         beam.createBody(self.space)
+        self.add_beam_to_dict(beam, beam.start, beam.end)
+        self.beam_list.append(beam)
 
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])
@@ -96,6 +105,7 @@ class Simulation:
             beam.createBody(self.space)
             
             self.add_beam_to_dict(beam, joint_point, self.selected_point_body)
+            self.beam_list.append(beam)
 
             self.selected_point_body = None
     
@@ -111,14 +121,23 @@ class Simulation:
             self.beam_dict[point2] = [beam]
     
     def add_anchors(self):
+
         for point in self.beam_dict:
+            # Adding anchors to ground first
+
             beam_list = self.beam_dict[point]
+            if point[0] <= 120 and point[1] <= 200:
+                for beam in beam_list:
+                    PivotJoint(self.space, beam.body, self.level.ground_pieces[0].body, point)
+            if point[0] >= self.w - 120 and point[1] <= 200:
+                for beam in beam_list:
+                    PivotJoint(self.space, beam.body, self.level.ground_pieces[1].body, point)
+                
+            # Then to beams themselves
             for i in range(len(beam_list) - 1):
                 for j in range(i + 1, len(beam_list)):
                     beam1, beam2 = beam_list[i], beam_list[j]
-                    joint = pymunk.PinJoint(beam1.body, beam2.body, point, point)
-                    print(joint)
-                    self.space.add(joint)
+                    PivotJoint(self.space, beam1.body, beam2.body, point)
 
     def loop(self):
         for event in pygame.event.get():
@@ -127,8 +146,10 @@ class Simulation:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.add_anchors()
-                self.sim_running = True
+                if self.first_time:
+                    self.add_anchors()
+                    self.first_time = not self.first_time
+                self.sim_running = not self.sim_running
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
             # Left mouse button
