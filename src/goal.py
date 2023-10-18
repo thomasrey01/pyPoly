@@ -43,6 +43,7 @@ class Goal:
 
     def reached_goal(self, shape: pymunk.Shape):
         for goal_piece in self.shapes:
-            if goal_piece.shapes_collide(shape):
+            if len(goal_piece.shapes_collide(shape).points) > 0:
+                print(goal_piece.shapes_collide(shape))
                 return True
         return False

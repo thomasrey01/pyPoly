@@ -121,7 +121,6 @@ class Simulation:
             self.beam_dict[point2] = [beam]
     
     def add_anchors(self):
-
         for point in self.beam_dict:
             # Adding anchors to ground first
 
@@ -157,8 +156,8 @@ class Simulation:
                 # self.add_body(pygame.mouse.get_pos())
                 self.select_point(pygame.mouse.get_pos())
 
-        fps = 30.0
-        dt = 1.0 / 100
+        fps = 60.0
+        dt = 0.5 / 100
         if self.sim_running:
             self.space.step(dt)
         if self.drawing:
