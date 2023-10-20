@@ -24,8 +24,12 @@ class Simulation:
     w = 600
     h = 600
 
-    running = True
-    drawing = True
+    fps: float
+    sim_dt: float
+
+    running = False
+    drawing: bool
+    interactive: bool
     first_time = True
     beam_list = []
     selected_point_body = None
@@ -35,11 +39,10 @@ class Simulation:
     fitness = Fitness()
     fitnessRenderer: FitnessRenderer
 
-    def __init__(self, bridge_string=None, speed=None):
-        pygame.init()
-
-        self.screen = pygame.display.set_mode((self.w, self.h))
-        self.clock = pygame.time.Clock()
+    def __init__(self, bridge_string=None, fps=60, sim_dt=0.5 / 100, interactive=True):
+        self.interactive = interactive
+        self.fps = fps
+        self.sim_dt = sim_dt
 
         ### Init pymunk and create space
         self.space = pymunk.Space()
@@ -50,18 +53,38 @@ class Simulation:
         # Init level
         self.level = Level(self.space, self.w, self.h)
 
-        # draw options for drawing
-        pymunk.pygame_util.positive_y_is_up = True
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
-
         # Build simple bridge for testing
+
         builder = Builder()
-        builder.simple_bridge(Vec2d(2, 5), 11)
+        if bridge_string is None:
+            builder.simple_bridge(Vec2d(2, 5), 11)
+        else:
+            builder.sequence = bridge_string
         builder.build_bridge(self.add_beam_to_grid)
 
-        # Init fitness and fitness renderer
-        self.fitnessRenderer = FitnessRenderer(self.fitness)
+        # Init fitness
         self.fitness.static_fitness(self.beam_list)
+
+        if interactive:
+            self.drawing = True
+            pygame.init()
+
+            self.screen = pygame.display.set_mode((self.w, self.h))
+            self.clock = pygame.time.Clock()
+
+            # draw options for drawing
+            pymunk.pygame_util.positive_y_is_up = True
+            self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
+
+            # init fitness renderer
+            self.fitnessRenderer = FitnessRenderer(self.fitness)
+
+        else:
+            self.drawing = False
+
+            self.add_anchors()
+            self.first_time = False
+            self.sim_running = True
 
     def add_body(self, pos):
         size = 10
@@ -76,6 +99,10 @@ class Simulation:
         shape = pymunk.Poly(body, points)
         shape.friction = 1
         self.space.add(body, shape)
+
+    def start(self):
+        self.running = True
+        self.run()
 
     def run(self):
         while self.running:
@@ -151,7 +178,7 @@ class Simulation:
                     beam1, beam2 = beam_list[i], beam_list[j]
                     PivotJoint(self.space, beam1.body, beam2.body, point)
 
-    def loop(self):
+    def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -166,34 +193,29 @@ class Simulation:
                 self.drawing = not self.drawing
             # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # self.add_body(pygame.mouse.get_pos())
                 self.select_point(pygame.mouse.get_pos())
 
-        fps = 60.0
-        dt = 0.5 / 100
+    def loop(self):
+        if self.interactive:
+            self.handle_events()
+
         if self.sim_running:
-            self.space.step(dt)
+            self.space.step(self.sim_dt)
 
             # Update fitness function
-            self.fitness.dynamic_fitness(dt, self.level.car, self.level.goal)
+            self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
         if self.drawing:
             self.draw()
 
-        # Tick clock and update fps in title
-        self.clock.tick(fps)
-        pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
+        if self.interactive:
+            # Tick clock and update fps in title
+            self.clock.tick(self.fps)
+            pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
         done, success = self.level.check_level_complete()
 
         if done:
             self.running = False
-
-            # TODO: handle level complete
-            if success:
-                print("SUCCES")
-            else:
-                print("FAILURE")
-            print(f"Fitness: {self.fitness.totalFitness:.2f}")
 
     def draw(self):
         # Clear the screen
@@ -207,12 +229,3 @@ class Simulation:
 
         # All done, lets flip the display
         pygame.display.flip()
-
-
-def main():
-    demo = Simulation()
-    demo.run()
-
-
-if __name__ == "__main__":
-    main()
