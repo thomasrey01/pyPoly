@@ -39,7 +39,7 @@ class Simulation:
     fitness = Fitness()
     fitnessRenderer: FitnessRenderer
 
-    def __init__(self, bridge_string=None, fps=60, sim_dt=0.5 / 100, interactive=True):
+    def __init__(self, bridge_string="", fps=60, sim_dt=0.5 / 100, interactive=True):
         self.interactive = interactive
         self.fps = fps
         self.sim_dt = sim_dt
@@ -56,11 +56,11 @@ class Simulation:
         # Build simple bridge for testing
 
         builder = Builder()
-        if bridge_string is None:
+        if bridge_string == "":
             builder.simple_bridge(Vec2d(2, 5), 11)
         else:
             builder.sequence = bridge_string
-        builder.build_bridge(self.add_beam_to_grid)
+        builder.build_bridge(self.add_beam_to_grid, bridge_string)
 
         # Init fitness
         self.fitness.static_fitness(self.beam_list)

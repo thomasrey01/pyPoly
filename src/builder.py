@@ -33,7 +33,9 @@ class Builder:
     def get_number(self, char: str):
         return ord(char) - ord("a")
 
-    def build_bridge(self, build_beam_func):
+    def build_bridge(self, build_beam_func, custom_sequence=""):
+        if custom_sequence != "":
+            self.sequence = custom_sequence
         self.sequence = self.sequence.lower()
 
         for i in range(0, len(self.sequence), 4):
@@ -75,3 +77,6 @@ class Builder:
 
         self.add_segment(start.x + length - 1, start.y, "c", wood)
         self.add_segment(start.x + length - 1, start.y + 1, "h", wood)
+
+    def get_sequence(self):
+        return self.sequence
