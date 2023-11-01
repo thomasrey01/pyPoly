@@ -38,14 +38,26 @@ class Simulation:
     pivots = []
     fitness = Fitness()
     fitnessRenderer: FitnessRenderer
+    
 
-    def __init__(self, bridge_string="", fps=60, sim_dt=0.5 / 100, interactive=True):
+
+    def __init__(self, bridge_string="", fps=60, sim_dt=0.5 / 100, interactive=True, genetic_callback=None):
         self.interactive = interactive
         self.fps = fps
         self.sim_dt = sim_dt
+        self.interactive = interactive
+        self.bridge_string = bridge_string
+        self.genetic_callback = genetic_callback
+        self.tick = 0
+        self.score = 0
+        
+        self.make_space()
 
-        ### Init pymunk and create space
+    def make_space(self):
+
         self.space = pymunk.Space()
+        ### Init pymunk and create space
+        
         self.space.gravity = (0.0, -981.0)
 
         self.b0 = self.space.static_body
@@ -56,16 +68,16 @@ class Simulation:
         # Build simple bridge for testing
 
         builder = Builder()
-        if bridge_string == "":
+        if self.bridge_string == "":
             builder.simple_bridge(Vec2d(2, 5), 11)
         else:
-            builder.sequence = bridge_string
-        builder.build_bridge(self.add_beam_to_grid, bridge_string)
+            builder.sequence = self.bridge_string
+        builder.build_bridge(self.add_beam_to_grid, self.bridge_string)
 
         # Init fitness
         self.fitness.static_fitness(self.beam_list)
 
-        if interactive:
+        if self.interactive:
             self.drawing = True
             pygame.init()
 
@@ -184,6 +196,7 @@ class Simulation:
                 self.running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
+                print(self.tick)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 if self.first_time:
                     self.add_anchors()
@@ -191,9 +204,21 @@ class Simulation:
                 self.sim_running = not self.sim_running
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                continue
             # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.select_point(pygame.mouse.get_pos())
+
+    # Method for calling from genetic tester
+    def auto_start(self):
+        if self.first_time:
+            self.add_anchors()
+            self.first_time = False
+        self.sim_running = True
+        self.running = True
+        self.interactive = False
+        self.run()
 
     def loop(self):
         if self.interactive:
@@ -203,7 +228,7 @@ class Simulation:
             self.space.step(self.sim_dt)
 
             # Update fitness function
-            self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
+            self.score = self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
         if self.drawing:
             self.draw()
 
@@ -213,9 +238,18 @@ class Simulation:
             pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
         done, success = self.level.check_level_complete()
+        self.tick += 1
+        if self.tick > 100000:
+            if self.genetic_callback:
+                self.score = self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
+                self.genetic_callback()
+            
 
         if done:
+            if self.genetic_callback:
+                self.genetic_callback()
             self.running = False
+
 
     def draw(self):
         # Clear the screen

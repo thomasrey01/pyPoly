@@ -25,6 +25,7 @@ class Fitness:
         # TODO stability of bridge
 
         self._update_car_distance(car, goal)
+        return self.car_distance
 
     def _update_car_distance(self, car: Car, goal: Goal):
         new_car_distance = car.distance_to_goal(goal)
