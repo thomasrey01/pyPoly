@@ -17,6 +17,9 @@ def main():
         elif argv[1] == "interactive":
             sim = Simulation(bridge_string = BridgeGenetic.new_gene(), interactive=True)
             sim.start()
+        
+        # Some extra arguments would be nice like parsing a custom string
+        # or give it some initial string to start searching from
         elif argv[1] == "-h" or argv[1] == "--help":
             pass
     else:

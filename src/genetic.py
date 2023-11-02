@@ -38,6 +38,6 @@ class BridgeGenetic:
     def sim_done(self):
         score = self.simulation.score
         gene = self.simulation.bridge_string
-        print(score)
+        print(f"Final score is: {score}")
         self.gene_scores[gene] = score
 

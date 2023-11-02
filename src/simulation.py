@@ -42,7 +42,6 @@ class Simulation:
 
 
     def __init__(self, bridge_string="", fps=60, sim_dt=0.5 / 100, interactive=True, genetic_callback=None):
-        self.interactive = interactive
         self.fps = fps
         self.sim_dt = sim_dt
         self.interactive = interactive
@@ -77,22 +76,20 @@ class Simulation:
         # Init fitness
         self.fitness.static_fitness(self.beam_list)
 
-        if self.interactive:
-            self.drawing = True
-            pygame.init()
+        self.drawing = True
+        pygame.init()
 
-            self.screen = pygame.display.set_mode((self.w, self.h))
-            self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((self.w, self.h))
+        self.clock = pygame.time.Clock()
 
-            # draw options for drawing
-            pymunk.pygame_util.positive_y_is_up = True
-            self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
+        # draw options for drawing
+        pymunk.pygame_util.positive_y_is_up = True
+        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
 
-            # init fitness renderer
-            self.fitnessRenderer = FitnessRenderer(self.fitness)
+        # init fitness renderer
+        self.fitnessRenderer = FitnessRenderer(self.fitness)
 
-        else:
-            self.drawing = False
+        if not self.interactive:
 
             self.add_anchors()
             self.first_time = False
@@ -211,14 +208,6 @@ class Simulation:
                 self.select_point(pygame.mouse.get_pos())
 
     # Method for calling from genetic tester
-    def auto_start(self):
-        if self.first_time:
-            self.add_anchors()
-            self.first_time = False
-        self.sim_running = True
-        self.running = True
-        self.interactive = False
-        self.run()
 
     def loop(self):
         if self.interactive:
