@@ -60,13 +60,27 @@ class Builder:
     def simple_bridge(self, start: Vec2d, length: int):
         self.sequence = ""
 
+        asphalt = "a"
+
         # build road
-        for i in range(start.x, start.x + length):
-            self.add_segment(i, start.y, "a", "a")
+        for i in range(start.x, start.x + length-1):
+            self.add_segment(i, start.y, "a", asphalt)
 
         # build supports
         wood = "b"
 
+        for i in range(start.x, start.x + length-1):
+            # horizontal
+            self.add_segment(i, start.y-1, "a", wood)
+
+            # cross beams
+            self.add_segment(i, start.y - 1, "b", wood)
+            self.add_segment(i, start.y, "h", wood)
+            
+            # vertical
+            self.add_segment(i, start.y, "g", wood)
+
+        """
         self.add_segment(start.x, start.y, "b", wood)
 
         for i in range(start.x + 1, start.x + length - 1):
@@ -77,6 +91,7 @@ class Builder:
 
         self.add_segment(start.x + length - 1, start.y, "c", wood)
         self.add_segment(start.x + length - 1, start.y + 1, "h", wood)
+        """
 
     def get_sequence(self):
         return self.sequence

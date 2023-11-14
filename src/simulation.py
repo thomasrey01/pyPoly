@@ -35,13 +35,18 @@ class Simulation:
     selected_point_body = None
     sim_running = False
     beam_dict = {}
-    pivots = []
+    pivot_joints = []
     fitness = Fitness()
     fitnessRenderer: FitnessRenderer
-    
 
-
-    def __init__(self, bridge_string="", fps=60, sim_dt=0.5 / 100, interactive=True, genetic_callback=None):
+    def __init__(
+        self,
+        bridge_string="",
+        fps=60,
+        sim_dt=0.5 / 100,
+        interactive=True,
+        genetic_callback=None,
+    ):
         self.fps = fps
         self.sim_dt = sim_dt
         self.interactive = interactive
@@ -49,14 +54,13 @@ class Simulation:
         self.genetic_callback = genetic_callback
         self.tick = 0
         self.score = 0
-        
+
         self.make_space()
 
     def make_space(self):
-
         self.space = pymunk.Space()
         ### Init pymunk and create space
-        
+
         self.space.gravity = (0.0, -981.0)
 
         self.b0 = self.space.static_body
@@ -68,13 +72,13 @@ class Simulation:
 
         builder = Builder()
         if self.bridge_string == "":
-            builder.simple_bridge(Vec2d(2, 5), 11)
+            builder.simple_bridge(Vec2d(3, 5), 10)
         else:
             builder.sequence = self.bridge_string
         builder.build_bridge(self.add_beam_to_grid, self.bridge_string)
 
         # Init fitness
-        self.fitness.static_fitness(self.beam_list)
+        self.fitness.start_fitness(self.beam_list)
 
         if self.interactive:
             self.drawing = True
@@ -173,20 +177,32 @@ class Simulation:
             beam_list = self.beam_dict[point]
             if point[0] <= 120 and point[1] <= 200:
                 for beam in beam_list:
-                    PivotJoint(
-                        self.space, beam.body, self.level.ground_pieces[0].body, point
+                    self.pivot_joints.append(
+                        PivotJoint(
+                            self.space,
+                            beam.body,
+                            self.level.ground_pieces[0].body,
+                            point,
+                        )
                     )
             if point[0] >= self.w - 120 and point[1] <= 200:
                 for beam in beam_list:
-                    PivotJoint(
-                        self.space, beam.body, self.level.ground_pieces[1].body, point
+                    self.pivot_joints.append(
+                        PivotJoint(
+                            self.space,
+                            beam.body,
+                            self.level.ground_pieces[1].body,
+                            point,
+                        )
                     )
 
             # Then to beams themselves
             for i in range(len(beam_list) - 1):
                 for j in range(i + 1, len(beam_list)):
                     beam1, beam2 = beam_list[i], beam_list[j]
-                    PivotJoint(self.space, beam1.body, beam2.body, point)
+                    self.pivot_joints.append(
+                        PivotJoint(self.space, beam1.body, beam2.body, point)
+                    )
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -211,6 +227,8 @@ class Simulation:
     # Method for calling from genetic tester
 
     def loop(self):
+        num_broken = self.break_joints()
+
         if self.interactive:
             self.handle_events()
 
@@ -218,7 +236,9 @@ class Simulation:
             self.space.step(self.sim_dt)
 
             # Update fitness function
-            self.score = self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
+            self.score = self.fitness.dynamic_fitness(
+                self.sim_dt, self.level.car, self.level.goal, num_broken
+            )
         if self.drawing:
             self.draw()
 
@@ -229,17 +249,18 @@ class Simulation:
 
         done, success = self.level.check_level_complete()
         self.tick += 1
-        if self.tick > 100000:
-            if self.genetic_callback:
-                self.score = self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
-                self.genetic_callback()
-            
+        if self.tick > 100000 and self.genetic_callback:
+            done = True
 
         if done:
-            if self.genetic_callback:
-                self.genetic_callback()
-            self.running = False
+            self.end_run()
 
+    def end_run(self):
+        self.running = False
+        if self.genetic_callback:
+            self.score = self.fitness.totalFitness
+
+            self.genetic_callback()
 
     def draw(self):
         # Clear the screen
@@ -253,3 +274,12 @@ class Simulation:
 
         # All done, lets flip the display
         pygame.display.flip()
+
+    def break_joints(self):
+        num_broken = 0
+        for joint in self.pivot_joints:
+            if joint.should_break(self.sim_dt):
+                num_broken += 1
+                self.space.remove(joint.joint)
+                self.pivot_joints.remove(joint)
+        return num_broken

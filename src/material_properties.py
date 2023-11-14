@@ -1,8 +1,8 @@
 from material import Material
 
 material_list = {
-    "asphalt": Material("asphalt", 100, 999, 2, 5, 1, 1, (10, 10, 10, 255), 2),
-    "wood": Material("wood", 100, 999, 3, 5, 1, 0, (164, 116, 73, 255), 3),
+    "asphalt": Material("asphalt", 100, 999, 2, 5, 0.5, 10, (10, 10, 10, 255), 2),
+    "wood": Material("wood", 100, 999, 3, 5, 0.1, 0, (164, 116, 73, 255), 3),
 }
 
 collision_categories = {

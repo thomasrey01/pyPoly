@@ -2,24 +2,24 @@ from simulation import Simulation
 from genetic import BridgeGenetic
 from sys import argv
 
+
 def print_usage():
     print("Usage: python main.py {interactive, genetic}")
     print("python main.py -h for help")
 
+
 def main():
-
-
-    if (len(argv) == 2):
-
+    if len(argv) == 2:
         # Genetic version for automatically testing genes
         # # Genetic still buggy for now
         if argv[1] == "genetic":
             genetic = BridgeGenetic()
         # Interactive version for manually building bridge
         elif argv[1] == "interactive":
-            sim = Simulation(bridge_string = BridgeGenetic.new_gene(), interactive=True)
+            #sim = Simulation(BridgeGenetic.new_gene(), interactive=True)
+            sim = Simulation("", interactive=True)
             sim.start()
-        
+
         elif argv[1] == "geneticstart":
             if len(argv) != 3:
                 print_usage()
@@ -30,7 +30,6 @@ def main():
             print_usage()
     else:
         print_usage()
-        
 
 
 if __name__ == "__main__":

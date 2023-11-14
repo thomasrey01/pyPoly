@@ -6,12 +6,12 @@ from goal import Goal
 
 
 class Car:
-    mass = 10
+    mass = 1000
     radius = 10
     position = Vec2d(100 / 2, 200 + radius)
     speed = 10
     friction = 10
-    max_force = 1000000
+    max_force = 1e7
 
     def __init__(self, space, position=None):
         self.body = pymunk.Body(self.mass, self.radius)
