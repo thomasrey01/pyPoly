@@ -9,7 +9,6 @@ class BridgeGenetic:
         self.simulation = Simulation(bridge_string=self.new_gene(), interactive=False)
         self.simulation.genetic_callback = self.sim_done
         self.simulation.start()
-        # self.simulation.auto_start()
 
     def start(self):
         pass
