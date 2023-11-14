@@ -1,6 +1,3 @@
-"""
-Remake of the pyramid demo from the box2d testbed.
-"""
 import os
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
@@ -100,20 +97,6 @@ class Simulation:
             self.sim_running = True
             self.drawing = False
 
-    def add_body(self, pos):
-        size = 10
-        points = [(-size, -size), (-size, size), (size, size), (size, -size)]
-        mass = 1.0
-        moment = pymunk.moment_for_poly(mass, points, (0, 0))
-        body = pymunk.Body(mass, moment)
-
-        pos = (pos[0], self.h - pos[1])
-
-        body.position = pos
-        shape = pymunk.Poly(body, points)
-        shape.friction = 1
-        self.space.add(body, shape)
-
     def start(self):
         self.running = True
         self.run()
@@ -122,15 +105,20 @@ class Simulation:
         while self.running:
             self.loop()
 
-    def add_beam_to_grid(self, material, grid_p1, grid_p2):
-        beam = Beam(
-            material,
-            grid_p1 * self.level.point_spacing,
-            grid_p2 * self.level.point_spacing,
-        )
-        beam.createBody(self.space)
-        self.add_beam_to_dict(beam, beam.start, beam.end)
-        self.beam_list.append(beam)
+    def add_beam_to_grid(self, material, grid_p1, grid_p2, multiply_spacing=True):
+        if grid_p1 != grid_p2:
+            if multiply_spacing:
+                beam = Beam(
+                    material,
+                    grid_p1 * self.level.point_spacing,
+                    grid_p2 * self.level.point_spacing,
+                )
+            else:
+                beam = Beam(material, grid_p1, grid_p2)
+
+            beam.createBody(self.space)
+            self.add_beam_to_dict(beam, beam.start, beam.end)
+            self.beam_list.append(beam)
 
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])
@@ -151,12 +139,9 @@ class Simulation:
         if self.selected_point_body == None:
             self.selected_point_body = joint_point
         else:
-            beam = Beam(material_list["wood"], self.selected_point_body, joint_point)
-            beam.createBody(self.space)
-
-            self.add_beam_to_dict(beam, joint_point, self.selected_point_body)
-            self.beam_list.append(beam)
-
+            self.add_beam_to_grid(
+                material_list["wood"], self.selected_point_body, joint_point, False
+            )
             self.selected_point_body = None
 
     def add_beam_to_dict(self, beam, point1, point2):
@@ -220,9 +205,12 @@ class Simulation:
                 self.drawing = not self.drawing
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 continue
+
             # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.select_point(pygame.mouse.get_pos())
+                # Sim has not run yet, allow building
+                if self.first_time:
+                    self.select_point(pygame.mouse.get_pos())
 
     # Method for calling from genetic tester
 

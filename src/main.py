@@ -16,8 +16,8 @@ def main():
             genetic = BridgeGenetic()
         # Interactive version for manually building bridge
         elif argv[1] == "interactive":
-            #sim = Simulation(BridgeGenetic.new_gene(), interactive=True)
-            sim = Simulation("", interactive=True)
+            sim = Simulation(BridgeGenetic.new_gene(), interactive=True)
+            #sim = Simulation("", interactive=True)
             sim.start()
 
         elif argv[1] == "geneticstart":
