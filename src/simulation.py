@@ -76,24 +76,25 @@ class Simulation:
         # Init fitness
         self.fitness.static_fitness(self.beam_list)
 
-        self.drawing = True
-        pygame.init()
+        if self.interactive:
+            self.drawing = True
+            pygame.init()
 
-        self.screen = pygame.display.set_mode((self.w, self.h))
-        self.clock = pygame.time.Clock()
+            self.screen = pygame.display.set_mode((self.w, self.h))
+            self.clock = pygame.time.Clock()
 
-        # draw options for drawing
-        pymunk.pygame_util.positive_y_is_up = True
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
+            # draw options for drawing
+            pymunk.pygame_util.positive_y_is_up = True
+            self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
 
-        # init fitness renderer
-        self.fitnessRenderer = FitnessRenderer(self.fitness)
+            # init fitness renderer
+            self.fitnessRenderer = FitnessRenderer(self.fitness)
 
         if not self.interactive:
-
             self.add_anchors()
             self.first_time = False
             self.sim_running = True
+            self.drawing = False
 
     def add_body(self, pos):
         size = 10
