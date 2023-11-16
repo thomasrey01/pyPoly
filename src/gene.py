@@ -5,6 +5,8 @@ from pymunk import Vec2d
 
 
 class Gene:
+    anchors = None
+
     mutateChance = 0.05
 
     # Endpoints of bridge segments
@@ -12,8 +14,11 @@ class Gene:
 
     genomes: [BeamGenome]
 
-    def random_gene(anchors, num_genomes):
-        gene = Gene(anchors)
+    def set_anchors(anchors):
+        Gene.anchors = anchors
+
+    def random_gene(num_genomes):
+        gene = Gene()
 
         for i in range(num_genomes):
             gene.add_segment(BeamGenome.randomSegment(gene.endpoints))
@@ -21,12 +26,12 @@ class Gene:
         return gene
 
 
-    def from_string(gene_string: str, anchors=None):
+    def from_string(gene_string: str):
         # char length of gene
         gl = 4
         assert len(gene_string) % gl == 0
 
-        gene = Gene(anchors)
+        gene = Gene()
 
         for i in range(0, len(gene_string), gl):
             genotype = gene_string[i : i + gl]
@@ -34,12 +39,11 @@ class Gene:
 
         return gene
 
-    def __init__(self, anchors=None):
+    def __init__(self):
         self.genomes = []
         self.endpoints = set()
-        if anchors:
-            for anchor in anchors:
-                self.endpoints.add(anchor)
+        for anchor in Gene.anchors:
+            self.endpoints.add(anchor)
 
     def add_segment(self, segment: BeamGenome):
         self.genomes.append(segment)
@@ -59,7 +63,7 @@ class Gene:
 
     def mutate(self):
         # Remove bridge segment
-        if self._mutationOccurs():
+        if self._mutationOccurs() and len(self.genomes) > 1:
             idxRemoved = random.randint(0, len(self.genomes) - 1)
             del self.genomes[idxRemoved]
             self._rebuild_endpoints()
@@ -73,11 +77,13 @@ class Gene:
             segment = random.choice(self.genomes)
             segment.change_material()
 
+        # Change start point
         if self._mutationOccurs():
             segment = random.choice(self.genomes)
             segment.change_start(self.endpoints)
             self._rebuild_endpoints()
 
+        # Change end point
         if self._mutationOccurs():
             segment = random.choice(self.genomes)
             segment.change_end()
@@ -87,10 +93,12 @@ class Gene:
         random.shuffle(self.genomes)
         random.shuffle(other.genomes)
 
-        seq1 = random.sample(self.genomes, len(self.genomes) // 2)
-        seq2 = random.sample(other.genomes, len(other.genomes) // 2)
+        seq1 = random.sample(self.genomes, max(len(self.genomes) // 2, 1))
+        seq2 = random.sample(other.genomes, max(len(other.genomes) // 2, 1))
 
         new_sequence = seq1 + seq2
+        assert(len(new_sequence) > 1)
+
 
         new_gene = Gene()
         for genome in new_sequence:

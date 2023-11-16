@@ -23,6 +23,7 @@ class Simulation:
 
     fps: float
     sim_dt: float
+    end_time: float
 
     running: bool
     drawing: bool
@@ -43,12 +44,14 @@ class Simulation:
         sim_dt=0.5 / 100,
         interactive=True,
         genetic_callback=None,
+        end_time = 0,
     ):
         self.fps = fps
         self.sim_dt = sim_dt
         self.interactive = interactive
         self.bridge_string = bridge_string
         self.genetic_callback = genetic_callback
+        self.end_time = end_time
         self.tick = 0
         self.score = 0
 
@@ -252,7 +255,8 @@ class Simulation:
 
         done, success = self.level.check_level_complete()
         self.tick += 1
-        if self.tick > 100000 and self.genetic_callback:
+
+        if self.end_time > 0 and self.tick * self.sim_dt > self.end_time:
             done = True
 
         if done:
@@ -266,7 +270,6 @@ class Simulation:
             self.genetic_callback()
         else:
             self.score = self.fitness.totalFitness
-            print(f"Final score: {self.fitness.totalFitness}")
 
     def draw(self):
         # Clear the screen

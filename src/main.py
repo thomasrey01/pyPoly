@@ -14,7 +14,7 @@ def main():
         # # Genetic still buggy for now
         if argv[1] == "genetic":
             #genetic = BridgeGenetic()
-            gen_alg = GeneticAlgorithm()
+            gen_alg = GeneticAlgorithm(multithreading=True)
             gen_alg.start()
 
         # Interactive version for manually building bridge
