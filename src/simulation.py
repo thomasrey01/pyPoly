@@ -231,12 +231,12 @@ class Simulation:
         if self.tick > 100000:
             if self.genetic_callback:
                 self.score = self.fitness.dynamic_fitness(self.sim_dt, self.level.car, self.level.goal)
-                self.genetic_callback()
+                self.genetic_callback(self.score, self.bridge_string)
             
 
         if done:
             if self.genetic_callback:
-                self.genetic_callback()
+                self.genetic_callback(self.score, self.bridge_string)
             self.running = False
 
 
@@ -252,3 +252,6 @@ class Simulation:
 
         # All done, lets flip the display
         pygame.display.flip()
+
+    def reset(self):
+        pass
