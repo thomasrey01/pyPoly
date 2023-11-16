@@ -33,6 +33,7 @@ class Simulation:
     sim_running: bool
     beam_dict: dict
     pivot_joints: [PivotJoint]
+    object_list = []
     fitness: Fitness
     fitnessRenderer: FitnessRenderer
 
@@ -118,7 +119,7 @@ class Simulation:
             beam.start *= self.level.point_spacing
             beam.end *= self.level.point_spacing
 
-        beam.createBody(self.space)
+        beam.createBody(self.space, self.object_list)
         self.add_beam_to_dict(beam, beam.start, beam.end)
         self.beam_list.append(beam)
 
@@ -219,7 +220,7 @@ class Simulation:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                 self.drawing = not self.drawing
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-                continue
+                self.reset()
 
             # Left mouse button
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -289,3 +290,18 @@ class Simulation:
                 self.space.remove(joint.joint)
                 self.pivot_joints.remove(joint)
         return num_broken
+    
+    def reset(self):
+        for joint in self.pivot_joints:
+            self.space.remove(joint.joint)
+        self.pivot_joints = []
+        for obj in self.object_list:
+            self.space.remove(obj)
+        self.object_list = []
+        self.beam_list = []
+        self.beam_dict = {}
+
+        self.sim_running = False
+        self.first_time = True
+
+        self.level.reset_level()

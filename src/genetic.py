@@ -17,18 +17,14 @@ class BridgeGenetic:
     def start(self):
 
         num_iterations = random.randint(5, 10)
-        simulation = Simulation(bridge_string=self.new_gene(), interactive=False)
-        simulation.genetic_callback = self.sim_done
-        other_simulation = Simulation(bridge_string=self.new_gene(), interactive=False)
-        simulation.start()
-        other_simulation.start()
         num_genes = 2
+        simulation = Simulation(bridge_string=self.random_bridge(), interactive=False)
+        simulation.genetic_callback = self.sim_done
 
-        # for _ in range(num_iterations):
-        # for _ in range(num_genes):
-            
-        #     simulation.start()
-        #     simulation.reset()
+        for _ in range(num_genes):
+            simulation.start()
+            simulation.reset()
+            simulation.new_bridge(self.random_bridge())
 
     def random_bridge(self):
         gene = self.new_gene()
