@@ -1,5 +1,5 @@
 from material import Material
-from material_properties import *
+from materialproperties import *
 
 import pymunk
 from pymunk import Vec2d
