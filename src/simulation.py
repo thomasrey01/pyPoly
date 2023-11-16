@@ -12,7 +12,7 @@ from joints import PivotJoint
 from level import Level
 from beam import Beam
 from builder import Builder
-from material_properties import material_list
+from materialproperties import material_list
 from fitness import Fitness
 from fitnessrenderer import FitnessRenderer
 
@@ -24,16 +24,16 @@ class Simulation:
     fps: float
     sim_dt: float
 
-    running = False
+    running: bool
     drawing: bool
     interactive: bool
-    first_time = True
-    beam_list = []
-    selected_point_body = None
-    sim_running = False
-    beam_dict = {}
-    pivot_joints = []
-    fitness = Fitness()
+    first_time: bool
+    beam_list: [Beam]
+    selected_point_body: None
+    sim_running: bool
+    beam_dict: dict
+    pivot_joints: [PivotJoint]
+    fitness: Fitness
     fitnessRenderer: FitnessRenderer
 
     def __init__(
@@ -52,6 +52,15 @@ class Simulation:
         self.tick = 0
         self.score = 0
 
+        self.running = False
+        self.first_time = True
+        self.selected_point_body = None
+        self.sim_running = False
+        self.beam_list = []
+        self.beam_dict = {}
+        self.pivot_joints = []
+        self.fitness = Fitness()
+
         self.make_space()
 
     def make_space(self):
@@ -67,11 +76,10 @@ class Simulation:
 
         # Build simple bridge for testing
 
-        builder = Builder()
+        builder = Builder(self.bridge_string)
         if self.bridge_string == "":
             builder.simple_bridge(Vec2d(3, 5), 10)
-        else:
-            builder.sequence = self.bridge_string
+
         builder.build_bridge(self.add_beam)
 
         # Init fitness
@@ -105,7 +113,7 @@ class Simulation:
         while self.running:
             self.loop()
 
-    def add_beam(self, beam:Beam, multiply_spacing=True):
+    def add_beam(self, beam: Beam, multiply_spacing=True):
         if multiply_spacing:
             beam.start *= self.level.point_spacing
             beam.end *= self.level.point_spacing
@@ -257,6 +265,7 @@ class Simulation:
 
             self.genetic_callback()
         else:
+            self.score = self.fitness.totalFitness
             print(f"Final score: {self.fitness.totalFitness}")
 
     def draw(self):

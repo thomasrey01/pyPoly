@@ -1,7 +1,7 @@
 from beam import Beam
 import utils
 from pymunk import Vec2d
-from material_properties import material_list
+from materialproperties import material_list
 import random
 
 
@@ -40,9 +40,9 @@ class BeamGenome:
 
     # Create random segment that is connected to the bridge
     def randomSegment(points: set):
-        p_start = random.choice(points)
-        p_end = random.choice(BeamGenome.relative_positions)
-        material = random.choice(BeamGenome.material_dict)
+        p_start = random.sample(points, 1)[0]
+        p_end = random.choice(list(BeamGenome.relative_positions.keys()))
+        material = random.choice(list(BeamGenome.material_dict.keys()))
         return BeamGenome(p_start.x, p_start.y, p_end, material)
 
     # init from properties
@@ -61,13 +61,13 @@ class BeamGenome:
 
     # Change the starting x and y to random position
     def change_start(self, points: set):
-        p_start = random.choice(points)
+        p_start = random.sample(points, 1)[0]
         self.x_start = p_start.x
         self.y_start = p_start.y
 
     # Change the end position randomly
     def change_end(self):
-        self.end_pos = random.choice(self.relative_positions)
+        self.end_pos = random.choice(list(self.relative_positions.keys()))
 
     # Get the endpoints as a Vec2d
     def get_endpoints(self):

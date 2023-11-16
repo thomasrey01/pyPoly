@@ -1,7 +1,7 @@
 from simulation import Simulation
 from genetic import BridgeGenetic
 from sys import argv
-
+from geneticalgorithm import GeneticAlgorithm
 
 def print_usage():
     print("Usage: python main.py {interactive, genetic}")
@@ -13,7 +13,10 @@ def main():
         # Genetic version for automatically testing genes
         # # Genetic still buggy for now
         if argv[1] == "genetic":
-            genetic = BridgeGenetic()
+            #genetic = BridgeGenetic()
+            gen_alg = GeneticAlgorithm()
+            gen_alg.start()
+
         # Interactive version for manually building bridge
         elif argv[1] == "interactive":
             #sim = Simulation(BridgeGenetic.new_gene(), interactive=True)

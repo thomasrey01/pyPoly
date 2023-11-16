@@ -7,7 +7,7 @@ from joints import PivotJoint
 class Fitness:
     # Weights for fitness function (higher is better)
     weights = {
-        "build_cost": -0.1,  # Total cost of bridge
+        "build_cost": -0.01,  # Total cost of bridge
         "structural_integrity": -500,  # Penalty per broken joint
         "car_distance": -10,  # car distance
     }

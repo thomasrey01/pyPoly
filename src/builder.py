@@ -1,5 +1,5 @@
 from pymunk import Vec2d
-from material_properties import *
+from materialproperties import *
 from gene import Gene
 from beamgenome import BeamGenome
 

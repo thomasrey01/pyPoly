@@ -1,6 +1,6 @@
 import pymunk
 from pymunk import Vec2d
-from material_properties import *
+from materialproperties import *
 
 from goal import Goal
 
