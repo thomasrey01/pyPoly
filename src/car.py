@@ -14,10 +14,14 @@ class Car:
     max_force = 1e7
 
     def __init__(self, space, position=None):
-        self.body = pymunk.Body(self.mass, self.radius)
-
+        self.space = space
         if position is not None:
             self.position = position
+        self.init_space()
+        
+    def init_space(self):
+        self.body = pymunk.Body(self.mass, self.radius)
+
         self.body.position = self.position
 
         self.shape = pymunk.Circle(self.body, 10, (0, 0))
@@ -25,11 +29,11 @@ class Car:
         self.shape.filter = pymunk.ShapeFilter(
             categories=collision_categories["car"], mask=collision_masks["car"]
         )
-        space.add(self.body, self.shape)
+        self.space.add(self.body, self.shape)
 
-        self.motor = pymunk.SimpleMotor(self.body, space.static_body, -self.speed)
+        self.motor = pymunk.SimpleMotor(self.body, self.space.static_body, -self.speed)
         self.motor.max_force = self.max_force
-        space.add(self.motor)
+        self.space.add(self.motor)
 
     def get_pos(self):
         return self.body.position
@@ -47,3 +51,9 @@ class Car:
     def is_out_of_bounds(self, xMax: float, yMax: float):
         pos = self.get_pos()
         return not (0 <= pos.x <= xMax and 0 <= pos.y <= yMax)
+    
+    def reset_car(self):
+        self.body.position = self.position
+        self.space.remove(self.body)
+        self.space.remove(self.shape)
+        self.init_space()

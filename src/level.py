@@ -27,6 +27,7 @@ class Level:
     def __init__(self, space: pymunk.Space, width, height):
         self.width = width
         self.height = height
+        self.space = space
 
         self.ground_pieces = []
         self.static_joints = {}
@@ -87,3 +88,6 @@ class Level:
         elif self.car.is_out_of_bounds(self.width, self.height):
             return True, False
         return False, False
+
+    def reset_level(self):
+        self.car.reset_car()

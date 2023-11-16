@@ -25,7 +25,7 @@ class Beam:
         ):
             self.start, self.end = self.end, self.start
 
-    def createBody(self, space):
+    def createBody(self, space, object_list):
         length = self.start.get_distance(self.end)
 
         if not self.material.check_length(length):
@@ -60,6 +60,9 @@ class Beam:
 
         space.add(body, shape)
         self.body = body
+
+        object_list.append(shape)
+        object_list.append(body)
 
     def area(self):
         return self.start.get_distance(self.end) * self.material.thickness
