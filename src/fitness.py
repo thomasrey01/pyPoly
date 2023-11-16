@@ -11,9 +11,12 @@ class Fitness:
         "structural_integrity": -500,  # Penalty per broken joint
         "car_distance": -10,  # car distance
     }
-    totalFitness = 0
+    totalFitness: int
+    car_distance: int
 
-    car_distance = None
+    def __init__(self) -> None:
+        self.totalFitness = 0
+        self.car_distance = None
 
     def start_fitness(self, beams: [Beam]):
         for beam in beams:
