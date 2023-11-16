@@ -86,7 +86,8 @@ class BeamGenome:
         return genotype
 
     # Return Beam
-    def get_fenotype(self):
+    # NOTE: Returns beam with grid coordinates, it needs to be converted to pixel coordinates
+    def to_beam(self):
         p1, p2 = self.get_endpoints()
 
         beam = Beam(self.material_dict[self.material], p1, p2)

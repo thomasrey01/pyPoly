@@ -72,7 +72,7 @@ class Simulation:
             builder.simple_bridge(Vec2d(3, 5), 10)
         else:
             builder.sequence = self.bridge_string
-        builder.build_bridge(self.add_beam_to_grid, self.bridge_string)
+        builder.build_bridge(self.add_beam)
 
         # Init fitness
         self.fitness.start_fitness(self.beam_list)
@@ -105,6 +105,15 @@ class Simulation:
         while self.running:
             self.loop()
 
+    def add_beam(self, beam:Beam, multiply_spacing=True):
+        if multiply_spacing:
+            beam.start *= self.level.point_spacing
+            beam.end *= self.level.point_spacing
+
+        beam.createBody(self.space)
+        self.add_beam_to_dict(beam, beam.start, beam.end)
+        self.beam_list.append(beam)
+
     def add_beam_to_grid(self, material, grid_p1, grid_p2, multiply_spacing=True):
         if grid_p1 != grid_p2:
             if multiply_spacing:
@@ -116,9 +125,7 @@ class Simulation:
             else:
                 beam = Beam(material, grid_p1, grid_p2)
 
-            beam.createBody(self.space)
-            self.add_beam_to_dict(beam, beam.start, beam.end)
-            self.beam_list.append(beam)
+            self.add_beam(beam)
 
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])

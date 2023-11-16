@@ -1,3 +1,4 @@
+from __future__ import annotations # allows a class to reference itself
 from beamgenome import BeamGenome
 import random
 from pymunk import Vec2d
@@ -72,3 +73,6 @@ class Gene:
 
     def to_string(self):
         return "".join([genome.to_string() for genome in self.genomes])
+    
+    def to_beams(self):
+        return [genome.to_beam() for genome in self.genomes]
