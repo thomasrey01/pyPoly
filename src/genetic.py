@@ -1,7 +1,7 @@
 from simulation import Simulation
 
+
 class BridgeGenetic:
-    
     gene_scores = {}
 
     def __init__(self, search_length=12):
@@ -16,27 +16,28 @@ class BridgeGenetic:
     def cross(self, gene1, gene2):
         pass
 
-    
+    def mutate(self, gene):
+        pass
 
-    def new_gene(self=None): # This method has to create a gene that starts at df and somehow ends at mg.
-
+    def new_gene(
+        self=None,
+    ):  # This method has to create a gene that starts at df and somehow ends at mg.
         # This method will get deleted after
-        def create_road(): # Creating road gene
+        def create_road():  # Creating road gene
             gene = ""
             connected_points = []
             for i in range(11):
-                gene += chr(ord('c') + i) + "faa"
-                connected_points.append((chr(ord('c') + i), 'f'))
+                gene += chr(ord("c") + i) + "faa"
+                connected_points.append((chr(ord("c") + i), "f"))
             return gene, connected_points
 
         gene, connected_points = create_road()
         print(f"Gene is: {gene}")
         print(f"Connected points are: {connected_points}")
         return gene
-    
+
     def sim_done(self):
         score = self.simulation.score
         gene = self.simulation.bridge_string
         print(f"Final score is: {score}")
         self.gene_scores[gene] = score
-

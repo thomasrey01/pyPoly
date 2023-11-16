@@ -249,6 +249,8 @@ class Simulation:
             self.score = self.fitness.totalFitness
 
             self.genetic_callback()
+        else:
+            print(f"Final score: {self.fitness.totalFitness}")
 
     def draw(self):
         # Clear the screen

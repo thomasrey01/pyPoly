@@ -15,7 +15,6 @@ class PivotJoint:
         beam2_point = point - body2.position
 
         self.joint = pymunk.constraints.PinJoint(body1, body2, beam1_point, beam2_point)
-
         space.add(self.joint)
 
     def get_force(self, dt):
