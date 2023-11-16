@@ -12,11 +12,11 @@ class Level:
     ground_friction = 1
 
     # Static ground shapes
-    ground_pieces: [pymunk.Poly] = []
+    ground_pieces: [pymunk.Poly]
 
     # Immovable joints to connect the bridge to
-    static_joints = {}
-
+    static_joints: dict
+    
     bridge_joints = [(90, 200), (210, 0)]
 
     width: float
@@ -27,6 +27,9 @@ class Level:
     def __init__(self, space: pymunk.Space, width, height):
         self.width = width
         self.height = height
+
+        self.ground_pieces = []
+        self.static_joints = {}
 
         ground_points = [
             [(0, 0), (0, 200), (120, 200), (120, 0)],

@@ -9,14 +9,14 @@ class Beam:
     material: Material
     start: Vec2d
     end: Vec2d
-
-    body = None
+    body: pymunk.Body
 
     def __init__(self, material, start, end):
         self.material = material
 
         self.start = start
         self.end = end
+        self.body = None
         self.sortPoints()
 
     def sortPoints(self):

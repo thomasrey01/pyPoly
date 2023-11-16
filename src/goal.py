@@ -8,10 +8,11 @@ class Goal:
     height: float = 50
     flag_size: float = 20
 
-    shapes: [pymunk.Shape] = []
+    shapes: [pymunk.Shape]
 
     def __init__(self, position, space):
         self.position = position
+        self.shapes = []
 
         points = [
             Vec2d(0, 0),
