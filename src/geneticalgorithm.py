@@ -60,7 +60,7 @@ class GeneticAlgorithm:
             bridge_string = gene.to_string()
             print(f"Bridge_string: {bridge_string}")
 
-            simulation = Simulation(bridge_string= gene.to_string())
+            simulation = Simulation(bridge_string= gene.to_string(), interactive=False)
             simulation.start()
 
             gen_results[gene] = simulation.score
