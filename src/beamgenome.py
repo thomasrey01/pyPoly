@@ -39,10 +39,11 @@ class BeamGenome:
         return BeamGenome(x_start, y_start, end_pos, material)
 
     # Create random segment that is connected to the bridge
-    def randomSegment(points: set):
+    def randomSegment(points: set, material='b'):
         p_start = random.sample(points, 1)[0]
         p_end = random.choice(list(BeamGenome.relative_positions.keys()))
-        material = random.choice(list(BeamGenome.material_dict.keys()))
+        if material is None:
+            material = random.choice(list(BeamGenome.material_dict.keys()))
         return BeamGenome(p_start.x, p_start.y, p_end, material)
 
     # init from properties

@@ -5,7 +5,9 @@ from pymunk import Vec2d
 
 
 class Gene:
-    anchors = None
+    fixed_segments = []
+
+    anchors = []
 
     mutateChance = 0.01
 
@@ -16,6 +18,12 @@ class Gene:
 
     def set_anchors(anchors):
         Gene.anchors = anchors
+
+    # Generate fixed asphalt segments
+    def generate_fixed(start_point, end_point):
+        Gene.fixed_segments = []
+        for i in range(start_point.x, end_point.x):
+            Gene.fixed_segments.append(BeamGenome(i, start_point.y, 'a', 'a'))
 
     def random_gene(num_genomes):
         gene = Gene()
@@ -65,7 +73,7 @@ class Gene:
         while idx < len(self.genomes):
             if self._mutationOccurs():
                 mutationType = random.choice(
-                    ["remove", "add", "material", "start", "end"]
+                    ["remove", "add", "start", "end"]
                 )
 
                 if mutationType == "remove" and len(self.genomes) > 1:
@@ -75,9 +83,6 @@ class Gene:
 
                 elif mutationType == "add":
                     self.add_segment(BeamGenome.randomSegment(self.endpoints))
-
-                elif mutationType == "material":
-                    self.genomes[idx].change_material()
 
                 elif mutationType == "start":
                     self.genomes[idx].change_start(self.endpoints)
@@ -141,4 +146,8 @@ class Gene:
         return sequence
 
     def to_beams(self):
-        return [genome.to_beam() for genome in self.genomes]
+        fixed = [fixed.to_beam() for fixed in Gene.fixed_segments]
+
+        variable = [genome.to_beam() for genome in self.genomes]
+
+        return fixed + variable

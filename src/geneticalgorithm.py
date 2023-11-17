@@ -69,8 +69,9 @@ class GeneticAlgorithm:
     def run_generation(self, generation: int):
         gen_results = {}
 
-        def run_simulation(gene, end_time):
+        def run_simulation(gene, end_time, start_point, end_point):
             Gene.set_anchors(self.anchors)
+            Gene.generate_fixed(start_point, end_point)
 
             simulation = Simulation(
                 bridge_string=gene.to_string(),
@@ -82,8 +83,11 @@ class GeneticAlgorithm:
 
         # Run the simulations
         if self.multithreading:
-            scores = joblib.Parallel(n_jobs=-1)(
-                joblib.delayed(run_simulation)(gene, self.end_time)
+            start_point = Vec2d(self.gap_start, self.gap_height)
+            end_point = start_point + Vec2d(self.gap_size, 0)
+
+            scores = joblib.Parallel(n_jobs=1)(
+                joblib.delayed(run_simulation)(gene, self.end_time, start_point, end_point)
                 for gene in self.genes
             )
             for gene, score in zip(self.genes, scores):
