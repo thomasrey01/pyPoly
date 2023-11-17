@@ -18,16 +18,20 @@ from fitnessrenderer import FitnessRenderer
 
 
 class Simulation:
-    w = 600
+    w:int
     h = 600
+    point_spacing = 40
 
     fps: float
     sim_dt: float
     end_time: float
+    interactive: bool
+    gap_length:int
+    gap_height:int
+    gap_start:int
 
     running: bool
     drawing: bool
-    interactive: bool
     first_time: bool
     beam_list: [Beam]
     selected_point_body: None
@@ -46,6 +50,9 @@ class Simulation:
         interactive=True,
         genetic_callback=None,
         end_time = 0,
+        gap_length=8,
+        gap_height=5,
+        gap_start=3,
     ):
         self.fps = fps
         self.sim_dt = sim_dt
@@ -55,6 +62,11 @@ class Simulation:
         self.end_time = end_time
         self.tick = 0
         self.score = 0
+        self.gap_length = gap_length
+        self.gap_height = gap_height
+        self.gap_start = gap_start
+
+        self.w = self.point_spacing * (gap_length + 2 * gap_start)
 
         self.running = False
         self.first_time = True
@@ -76,13 +88,13 @@ class Simulation:
         self.b0 = self.space.static_body
 
         # Init level
-        self.level = Level(self.space, self.w, self.h)
+        self.level = Level(self.space, self.w, self.h, self.gap_length, self.gap_height, self.gap_start, self.point_spacing)
 
-        # Build simple bridge for testing
+        # Build simple bridge for testing 
 
         builder = Builder(self.bridge_string)
         if self.bridge_string == "":
-            builder.simple_bridge(Vec2d(3, 5), 10)
+            builder.simple_bridge(Vec2d(self.gap_start, self.gap_height), self.gap_length + 1)
 
         builder.build_bridge(self.add_beam)
 
@@ -179,7 +191,7 @@ class Simulation:
             # Adding anchors to ground first
 
             beam_list = self.beam_dict[point]
-            if point[0] <= 120 and point[1] <= 200:
+            if point[0] <= self.gap_start * self.level.point_spacing and point[1] <= self.gap_height * self.level.point_spacing:
                 for beam in beam_list:
                     self.pivot_joints.append(
                         PivotJoint(
@@ -189,7 +201,7 @@ class Simulation:
                             point,
                         )
                     )
-            if point[0] >= self.w - 120 and point[1] <= 200:
+            if point[0] >= (self.gap_start + self.gap_length) * self.level.point_spacing and point[1] <= self.gap_height * self.level.point_spacing:
                 for beam in beam_list:
                     self.pivot_joints.append(
                         PivotJoint(

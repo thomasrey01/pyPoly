@@ -8,7 +8,7 @@ class PivotJoint:
     max_force: float
 
     def __init__(
-        self, space, body1: pymunk.Body, body2: pymunk.Body, point, max_force=3e6
+        self, space, body1: pymunk.Body, body2: pymunk.Body, point, max_force=5e6
     ):
         self.max_force = max_force
         beam1_point = point - body1.position

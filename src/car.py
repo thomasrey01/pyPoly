@@ -22,9 +22,9 @@ class Car:
     def init_space(self):
         self.body = pymunk.Body(self.mass, self.radius)
 
-        self.body.position = self.position
+        self.body.position = self.position + Vec2d(0, self.radius)
 
-        self.shape = pymunk.Circle(self.body, 10, (0, 0))
+        self.shape = pymunk.Circle(self.body, self.radius, (0, 0))
         self.shape.friction = self.friction
         self.shape.filter = pymunk.ShapeFilter(
             categories=collision_categories["car"], mask=collision_masks["car"]

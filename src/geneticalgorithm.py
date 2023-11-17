@@ -11,7 +11,7 @@ class GeneticAlgorithm:
     num_per_generation: int  # Should be even
     num_generations: int
     num_start_segments: int
-    gap_size: int  # Gap size in terms of grid units #TODO: refactor simulation to support this
+    gap_length: int  # Gap size in terms of grid units #TODO: refactor simulation to support this
     gap_height: int
     gap_start: int
     multithreading: bool
@@ -35,7 +35,7 @@ class GeneticAlgorithm:
         self.num_per_generation = num_per_generation
         self.num_generations = num_generations
         self.num_start_segments = num_start_segments
-        self.gap_size = gap_length
+        self.gap_length = gap_length
         self.gap_height = gap_height
         self.gap_start = gap_start
         self.multithreading = multithreading
@@ -69,7 +69,7 @@ class GeneticAlgorithm:
     def run_generation(self, generation: int):
         gen_results = {}
 
-        def run_simulation(gene, end_time, start_point, end_point):
+        def run_simulation(gene, end_time, start_point, end_point, gap_start = self.gap_start, gap_length=self.gap_length, gap_height = self.gap_height):
             Gene.set_anchors(self.anchors)
             Gene.generate_fixed(start_point, end_point)
 
@@ -77,6 +77,9 @@ class GeneticAlgorithm:
                 bridge_string=gene.to_string(),
                 interactive=False,
                 end_time=end_time,
+                gap_start=gap_start,
+                gap_length=gap_length,
+                gap_height=gap_height
             )
             simulation.start()
             return simulation.score
@@ -84,7 +87,7 @@ class GeneticAlgorithm:
         # Run the simulations
         if self.multithreading:
             start_point = Vec2d(self.gap_start, self.gap_height)
-            end_point = start_point + Vec2d(self.gap_size, 0)
+            end_point = start_point + Vec2d(self.gap_length, 0)
 
             scores = joblib.Parallel(n_jobs=1)(
                 joblib.delayed(run_simulation)(gene, self.end_time, start_point, end_point)

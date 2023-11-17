@@ -7,8 +7,6 @@ from collisions import *
 
 
 class Level:
-    point_spacing = 40
-
     ground_friction = 1
 
     # Static ground shapes
@@ -16,30 +14,39 @@ class Level:
 
     # Immovable joints to connect the bridge to
     static_joints: dict
-    
+
     bridge_joints = [(90, 200), (210, 0)]
 
+    point_spacing: int
     width: float
     height: float
     car: Car
     goal: Goal
 
-    def __init__(self, space: pymunk.Space, width, height):
+    def __init__(self, space: pymunk.Space, width, height, gap_length, gap_height, gap_start, point_spacing):
         self.width = width
         self.height = height
         self.space = space
+        self.point_spacing = point_spacing
 
         self.ground_pieces = []
         self.static_joints = {}
 
+        # Calculate gap sizes in pixels
+        gl_px = gap_length * self.point_spacing
+        gh_px = gap_height * self.point_spacing
+        gs_px = gap_start * self.point_spacing
+
+
+
         ground_points = [
-            [(0, 0), (0, 200), (120, 200), (120, 0)],
+            [(0, 0), (0, gh_px), (gs_px, gh_px), (gs_px, 0)],
             [
                 (width, 0),
-                (width, 200),
-                (width - 120, 200),
-                (width - 120, 0),
-            ],
+                (width, gh_px),
+                (gs_px + gl_px, gh_px),
+                (gs_px + gl_px, 0),
+            ], 
         ]
 
         for ground in ground_points:
@@ -53,18 +60,14 @@ class Level:
             space.add(ground_piece)
             self.ground_pieces.append(ground_piece)
 
-        # def no_point_collide(arbiter, space, data):
-        #     return False
-
-        # self.collision_handler = space.add_collision_handler(1, 1)
-        # self.collision_handler.begin = no_point_collide
-
         # Ball / car
-        self.car = Car(space)
+        self.car = Car(space, position=Vec2d(gs_px / 2, gh_px))
 
         # Goal
-        goal_position = Vec2d(550, 200)
+        goal_position = Vec2d(gs_px + gl_px + gs_px / 2, gh_px)
         self.goal = Goal(goal_position, space)
+
+        return
 
         # joint points
         for i in range(0, width, self.point_spacing):
