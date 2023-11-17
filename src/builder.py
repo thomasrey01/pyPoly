@@ -38,8 +38,13 @@ class Builder:
             self.add_segment(i, start.y - 1, "a", wood)
 
             # cross beams
-            self.add_segment(i, start.y - 1, "b", wood)
-            self.add_segment(i, start.y, "h", wood)
+            if i % 2:
+                self.add_segment(i, start.y - 1, "b", wood)
+            else:
+                self.add_segment(i, start.y, "h", wood)
 
             # vertical
             self.add_segment(i, start.y, "g", wood)
+
+        self.add_segment(start.x, start.y - 2, 'b', 'b')
+        self.add_segment(start.x + length - 1, start.y -2, 'd', 'b')
