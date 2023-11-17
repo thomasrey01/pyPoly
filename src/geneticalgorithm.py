@@ -75,11 +75,12 @@ class GeneticAlgorithm:
     def run_generation(self, generation: int):
         gen_results = {}
 
+        start_point = Vec2d(self.gap_start, self.gap_height)
+        end_point = start_point + Vec2d(self.gap_length, 0)
+
         def run_simulation(
             gene,
             end_time,
-            start_point,
-            end_point,
             gap_start=self.gap_start,
             gap_length=self.gap_length,
             gap_height=self.gap_height,
@@ -100,12 +101,9 @@ class GeneticAlgorithm:
 
         # Run the simulations
         if self.multithreading:
-            start_point = Vec2d(self.gap_start, self.gap_height)
-            end_point = start_point + Vec2d(self.gap_length, 0)
-
             scores = joblib.Parallel(n_jobs=1)(
                 joblib.delayed(run_simulation)(
-                    gene, self.end_time, start_point, end_point
+                    gene, self.end_time
                 )
                 for gene in self.genes
             )
@@ -121,7 +119,10 @@ class GeneticAlgorithm:
         print(
             f"Generation {generation} max: {max(gen_results.values())} with gene: {sorted_gen[-1][0].to_string()}"
         )
+
         if self.display_best:
+            best_sim = Simulation(sorted_gen[-1][0].to_string(True), fps=0, )
+            #run_simulation(sorted_gen[-1][0], self.end_time, start_point, end_point)
             pass
             
 
