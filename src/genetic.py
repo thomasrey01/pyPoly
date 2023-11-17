@@ -41,9 +41,7 @@ class BridgeGenetic:
     def mutate(self, gene):
         pass
 
-    def new_gene(
-        self=None,
-    ):  # This method has to create a gene that starts at df and somehow ends at mg.
+    def new_gene():  # This method has to create a gene that starts at df and somehow ends at mg.
         # This method will get deleted after
         def create_road():  # Creating road gene
             gene = ""

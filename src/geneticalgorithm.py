@@ -99,7 +99,7 @@ class GeneticAlgorithm:
         
         sorted_gen = dict(sorted(gen_results.items(), key=lambda x: x[1]))
 
-        print(f"Generation {generation} max: {max(gen_results.values())}")
+        print(f"Generation {generation} max: {max(gen_results.values())} with gene: {list(sorted_gen.keys())[-1].to_string()}")
 
         self.results[generation] = gen_results
 
