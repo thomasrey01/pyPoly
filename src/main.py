@@ -16,7 +16,7 @@ def main():
         # Genetic version for automatically testing genes
         # # Genetic still buggy for now
         if argv[1] == "genetic":
-            gen_alg = GeneticAlgorithm(multithreading=True, filename=filename)
+            gen_alg = GeneticAlgorithm(multithreading=True, filename=filename, display_best=False)
             
             # Load previous results
             if len(argv) >= 3 and argv[2] == '--resume':
@@ -51,4 +51,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("Got keyboard interrupt")
+        exit(0)
+    except InterruptedError:
+        print("Got interrupted error")
         exit(0)
