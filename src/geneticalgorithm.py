@@ -16,6 +16,7 @@ class GeneticAlgorithm:
     gap_start: int
     multithreading: bool
     end_time: float
+    display_best: bool
 
     anchors: [Vec2d]
     genes: [Gene]
@@ -31,6 +32,7 @@ class GeneticAlgorithm:
         gap_start=3,
         multithreading=False,
         end_time=20,
+        display_best=True
     ):
         self.num_per_generation = num_per_generation
         self.num_generations = num_generations
@@ -40,17 +42,21 @@ class GeneticAlgorithm:
         self.gap_start = gap_start
         self.multithreading = multithreading
         self.end_time = end_time
+        self.display_best = display_best
 
         self.genes = []
         self.results = {}
 
         self.anchors = []
         # Add left and right anchors
-        for i in range(gap_height -2, gap_height):
+        for i in range(gap_height - 2, gap_height):
             self.anchors.append(Vec2d(gap_start, i))
             self.anchors.append(Vec2d(gap_start + gap_length, i))
 
+        start_point = Vec2d(self.gap_start, self.gap_height)
+        end_point = start_point + Vec2d(self.gap_length, 0)
         Gene.set_anchors(self.anchors)
+        Gene.generate_fixed(start_point, end_point)
 
         for i in range(self.num_per_generation):
             self.genes.append(Gene.random_gene(num_start_segments))
@@ -69,7 +75,15 @@ class GeneticAlgorithm:
     def run_generation(self, generation: int):
         gen_results = {}
 
-        def run_simulation(gene, end_time, start_point, end_point, gap_start = self.gap_start, gap_length=self.gap_length, gap_height = self.gap_height):
+        def run_simulation(
+            gene,
+            end_time,
+            start_point,
+            end_point,
+            gap_start=self.gap_start,
+            gap_length=self.gap_length,
+            gap_height=self.gap_height,
+        ):
             Gene.set_anchors(self.anchors)
             Gene.generate_fixed(start_point, end_point)
 
@@ -79,7 +93,7 @@ class GeneticAlgorithm:
                 end_time=end_time,
                 gap_start=gap_start,
                 gap_length=gap_length,
-                gap_height=gap_height
+                gap_height=gap_height,
             )
             simulation.start()
             return simulation.score
@@ -90,7 +104,9 @@ class GeneticAlgorithm:
             end_point = start_point + Vec2d(self.gap_length, 0)
 
             scores = joblib.Parallel(n_jobs=1)(
-                joblib.delayed(run_simulation)(gene, self.end_time, start_point, end_point)
+                joblib.delayed(run_simulation)(
+                    gene, self.end_time, start_point, end_point
+                )
                 for gene in self.genes
             )
             for gene, score in zip(self.genes, scores):
@@ -99,10 +115,15 @@ class GeneticAlgorithm:
         else:
             for gene in self.genes:
                 gen_results[gene] = self.run_simulation(gene)
-        
-        sorted_gen = dict(sorted(gen_results.items(), key=lambda x: x[1]))
 
-        print(f"Generation {generation} max: {max(gen_results.values())} with gene: {list(sorted_gen.keys())[-1].to_string()}")
+        sorted_gen = sorted(gen_results.items(), key=lambda x: x[1])
+
+        print(
+            f"Generation {generation} max: {max(gen_results.values())} with gene: {sorted_gen[-1][0].to_string()}"
+        )
+        if self.display_best:
+            pass
+            
 
         self.results[generation] = gen_results
 
