@@ -1,6 +1,7 @@
 from simulation import Simulation
 from genetic import BridgeGenetic
-from sys import argv
+from sys import argv, exit
+import sys
 from geneticalgorithm import GeneticAlgorithm
 
 filename = "genalg.pkl"
@@ -50,3 +51,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("Got keyboard interrupt")
+        exit(0)

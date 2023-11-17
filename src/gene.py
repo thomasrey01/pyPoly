@@ -9,7 +9,7 @@ class Gene:
 
     anchors = []
 
-    mutateChance = 0.01
+    mutateChance = 0.05
 
     # Endpoints of bridge segments
     endpoints: set
@@ -72,28 +72,18 @@ class Gene:
         idx = 0
         while idx < len(self.genomes):
             if self._mutationOccurs():
-                mutationType = random.choice(
-                    ["remove", "add", "start", "end"]
-                )
+                val = random.randint(0, 10)
+                
 
-                if mutationType == "remove" and len(self.genomes) > 1:
+                if val < 1 and len(self.genomes) > 1:
                     del self.genomes[idx]
                     self._rebuild_endpoints()
                     idx -= 1
 
-                elif mutationType == "add":
+                else:
                     self.add_segment(BeamGenome.randomSegment(self.endpoints))
 
-                elif mutationType == "start":
-                    self.genomes[idx].change_start(self.endpoints)
-                    self._rebuild_endpoints()
-
-                elif mutationType == "end":
-                    self.genomes[idx].change_end()
-
-                else:
-                    raise KeyError("Unknown mutation type")
-
+        
             idx += 1
             """
 
