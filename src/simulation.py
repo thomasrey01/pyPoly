@@ -149,11 +149,11 @@ class Simulation:
             else:
                 beam = Beam(material, grid_p1, grid_p2)
 
-            self.add_beam(beam)
+            self.add_beam(beam, False)
 
     def select_point(self, mouse_pos):
         pos = (mouse_pos[0], self.h - mouse_pos[1])
-        spacing = self.level.point_spacing
+        spacing = self.point_spacing
         x, y = 0, 0
         if pos[0] % spacing > spacing // 2:
             x = pos[0] + (spacing - pos[0] % spacing)
@@ -169,6 +169,7 @@ class Simulation:
 
         if self.selected_point_body == None:
             self.selected_point_body = joint_point
+            
         else:
             self.add_beam_to_grid(
                 material_list["wood"], self.selected_point_body, joint_point, False

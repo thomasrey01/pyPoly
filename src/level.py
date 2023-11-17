@@ -67,8 +67,6 @@ class Level:
         goal_position = Vec2d(gs_px + gl_px + gs_px / 2, gh_px)
         self.goal = Goal(goal_position, space)
 
-        return
-
         # joint points
         for i in range(0, width, self.point_spacing):
             for j in range(0, height, self.point_spacing):
