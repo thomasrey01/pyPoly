@@ -53,6 +53,7 @@ class Simulation:
         gap_length=8,
         gap_height=5,
         gap_start=3,
+        drawing=False
     ):
         self.fps = fps
         self.sim_dt = sim_dt
@@ -65,6 +66,7 @@ class Simulation:
         self.gap_length = gap_length
         self.gap_height = gap_height
         self.gap_start = gap_start
+        self.drawing = drawing
 
         self.w = self.point_spacing * (gap_length + 2 * gap_start)
 
@@ -103,6 +105,8 @@ class Simulation:
 
         if self.interactive:
             self.drawing = True
+
+        if self.drawing:
             pygame.init()
 
             self.screen = pygame.display.set_mode((self.w, self.h))
@@ -119,7 +123,6 @@ class Simulation:
             self.add_anchors()
             self.first_time = False
             self.sim_running = True
-            self.drawing = False
 
     def start(self):
         self.running = True
@@ -261,9 +264,6 @@ class Simulation:
             )
         if self.drawing:
             self.draw()
-
-        if self.interactive:
-            # Tick clock and update fps in title
             self.clock.tick(self.fps)
             pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 

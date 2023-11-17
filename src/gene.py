@@ -131,9 +131,14 @@ class Gene:
             new_gene.add_segment(genome)
         return new_gene
 
-    def to_string(self):
+    def to_string(self, include_fixed=False):
+        if(include_fixed):
+            fixed_sequence = "".join([fixed_segment.to_string() for fixed_segment in Gene.fixed_segments])
+        else:
+            fixed_sequence = ""
+
         sequence = "".join([genome.to_string() for genome in self.genomes])
-        return sequence
+        return fixed_sequence + sequence
 
     def to_beams(self):
         fixed = [fixed.to_beam() for fixed in Gene.fixed_segments]
