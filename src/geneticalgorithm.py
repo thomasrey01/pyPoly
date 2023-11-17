@@ -91,6 +91,7 @@ class GeneticAlgorithm:
             simulation = Simulation(
                 bridge_string=gene.to_string(),
                 interactive=False,
+                drawing=False,
                 end_time=end_time,
                 gap_start=gap_start,
                 gap_length=gap_length,
@@ -121,9 +122,8 @@ class GeneticAlgorithm:
         )
 
         if self.display_best:
-            best_sim = Simulation(sorted_gen[-1][0].to_string(True), fps=0, )
-            #run_simulation(sorted_gen[-1][0], self.end_time, start_point, end_point)
-            pass
+            best_sim = Simulation(sorted_gen[-1][0].to_string(True), fps=0, interactive=False, drawing=True)
+            best_sim.start()
             
 
         self.results[generation] = gen_results

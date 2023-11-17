@@ -53,7 +53,7 @@ class Simulation:
         gap_length=8,
         gap_height=5,
         gap_start=3,
-        drawing=True
+        drawing=False
     ):
         self.fps = fps
         self.sim_dt = sim_dt
@@ -264,9 +264,6 @@ class Simulation:
             )
         if self.drawing:
             self.draw()
-
-        if self.interactive:
-            # Tick clock and update fps in title
             self.clock.tick(self.fps)
             pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
