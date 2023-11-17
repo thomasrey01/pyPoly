@@ -46,7 +46,7 @@ class GeneticAlgorithm:
 
         self.anchors = []
         # Add left and right anchors
-        for i in range(gap_height):
+        for i in range(gap_height -2, gap_height):
             self.anchors.append(Vec2d(gap_start, i))
             self.anchors.append(Vec2d(gap_start + gap_length, i))
 
