@@ -1,7 +1,7 @@
 import pymunk
 from pymunk import Vec2d
-from materialproperties import *
 
+from materialproperties import *
 from goal import Goal
 
 
@@ -39,7 +39,7 @@ class Car:
         return self.body.position
 
     def distance_to_goal(self, goal: Goal):
-        return self.get_pos().get_distance(goal.position)
+        return max(self.get_pos().get_distance(goal.position) - (2 * self.radius ** 2) ** 0.5, 0) # small offset for imprecision 
 
     def has_reached_goal(self, goal: Goal):
         for goal_piece in goal.shapes:
