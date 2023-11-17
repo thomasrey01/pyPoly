@@ -3,6 +3,8 @@ from genetic import BridgeGenetic
 from sys import argv
 from geneticalgorithm import GeneticAlgorithm
 
+filename = "genalg.pkl"
+
 def print_usage():
     print("Usage: python main.py {interactive, genetic}")
     print("python main.py -h for help")
@@ -13,8 +15,12 @@ def main():
         # Genetic version for automatically testing genes
         # # Genetic still buggy for now
         if argv[1] == "genetic":
-            #genetic = BridgeGenetic()
-            gen_alg = GeneticAlgorithm(multithreading=True)
+            gen_alg = GeneticAlgorithm(multithreading=True, filename=filename)
+            
+            # Load previous results
+            if len(argv) >= 3 and argv[2] == '--resume':
+                gen_alg.load_genes(filename)
+
             gen_alg.start()
 
         # Interactive version for manually building bridge

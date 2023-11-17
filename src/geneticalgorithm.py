@@ -11,12 +11,13 @@ class GeneticAlgorithm:
     num_per_generation: int  # Should be even
     num_generations: int
     num_start_segments: int
-    gap_length: int  # Gap size in terms of grid units #TODO: refactor simulation to support this
+    gap_length: int  # Gap size in terms of grid units 
     gap_height: int
     gap_start: int
     multithreading: bool
     end_time: float
     display_best: bool
+    filename: str
 
     anchors: [Vec2d]
     genes: [Gene]
@@ -32,7 +33,8 @@ class GeneticAlgorithm:
         gap_start=3,
         multithreading=False,
         end_time=20,
-        display_best=True
+        display_best=True,
+        filename = None
     ):
         self.num_per_generation = num_per_generation
         self.num_generations = num_generations
@@ -43,6 +45,7 @@ class GeneticAlgorithm:
         self.multithreading = multithreading
         self.end_time = end_time
         self.display_best = display_best
+        self.filename = filename
 
         self.genes = []
         self.results = {}
@@ -59,7 +62,7 @@ class GeneticAlgorithm:
         Gene.generate_fixed(start_point, end_point)
 
         for i in range(self.num_per_generation):
-            self.genes.append(Gene.random_gene(num_start_segments))
+            self.genes.append(Gene.random_gene(num_start_segments))      
 
     def start(self):
         for generation in range(self.num_generations):
@@ -125,8 +128,10 @@ class GeneticAlgorithm:
             best_sim = Simulation(sorted_gen[-1][0].to_string(True), fps=0, interactive=False, drawing=True)
             best_sim.start()
             
-
         self.results[generation] = gen_results
+    
+        if self.filename is not None:
+            self.save_genes(self.filename)
 
         self.tournament_selection(sorted_gen)
 
@@ -151,3 +156,11 @@ class GeneticAlgorithm:
     #     if gen_results[candidate1] > gen_results[candidate2]:
     #         return candidate1
     #     return candidate2
+
+    def load_genes(self, filename):
+        with open(filename, 'rb') as file:
+            self.genes = joblib.load(file)
+
+    def save_genes(self, filename):
+        with open(filename, 'wb') as file:
+            joblib.dump(self.genes, file)
