@@ -125,28 +125,20 @@ class GeneticAlgorithm:
             pass
             
 
-        self.results[generation] = gen_results
-
         self.tournament_selection(sorted_gen)
 
-    def tournament_selection(self, sorted_gen: dict):
+    def tournament_selection(self, sorted_gen: tuple):
         new_genes = []
-
+        new_genes.append(sorted_gen[-1][0])
         children_per_parent = 2
 
         for i in range(self.num_per_generation // children_per_parent):
-            parent1, parent2 = random.sample(list(sorted_gen.keys())[-10:-1], 2)
+            parent1 = sorted_gen[-1]
+            parent2 = sorted_gen[-2]
 
             for c in range(children_per_parent):
-                child = parent1.cross(parent2)
+                child = parent1[0].cross(parent2[0])
                 child.mutate()
                 new_genes.append(child)
 
         self.genes = new_genes
-
-    # def tournament(self, gen_results) -> Gene:
-    #     candidate1, candidate2 = random.sample(list(gen_results.keys()), 2)
-
-    #     if gen_results[candidate1] > gen_results[candidate2]:
-    #         return candidate1
-    #     return candidate2
