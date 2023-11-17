@@ -92,21 +92,22 @@ class GeneticAlgorithm:
         else:
             for gene in self.genes:
                 gen_results[gene] = self.run_simulation(gene)
+        
+        sorted_gen = dict(sorted(gen_results.items(), key=lambda x: x[1]))
 
         print(f"Generation {generation} max: {max(gen_results.values())}")
 
         self.results[generation] = gen_results
 
-        self.tournament_selection(gen_results)
+        self.tournament_selection(sorted_gen)
 
-    def tournament_selection(self, gen_results: dict):
+    def tournament_selection(self, sorted_gen: dict):
         new_genes = []
 
         children_per_parent = 2
 
         for i in range(self.num_per_generation // children_per_parent):
-            parent1 = self.tournament(gen_results)
-            parent2 = self.tournament(gen_results)
+            parent1, parent2 = random.sample(list(sorted_gen.keys())[-10:-1], 2)
 
             for c in range(children_per_parent):
                 child = parent1.cross(parent2)
@@ -115,8 +116,9 @@ class GeneticAlgorithm:
 
         self.genes = new_genes
 
-    def tournament(self, gen_results) -> Gene:
-        candidate1, candidate2 = random.sample(list(gen_results.keys()), 2)
-        if gen_results[candidate1] > gen_results[candidate2]:
-            return candidate1
-        return candidate2
+    # def tournament(self, gen_results) -> Gene:
+    #     candidate1, candidate2 = random.sample(list(gen_results.keys()), 2)
+
+    #     if gen_results[candidate1] > gen_results[candidate2]:
+    #         return candidate1
+    #     return candidate2
