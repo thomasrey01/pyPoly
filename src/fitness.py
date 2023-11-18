@@ -1,6 +1,7 @@
 from beam import Beam
 from car import Car
 from goal import Goal
+import settings
 from joints import PivotJoint
 
 
@@ -16,7 +17,11 @@ class Fitness:
 
     def __init__(self) -> None:
         self.totalFitness = 0
-        self.car_distance = None
+        self.car_distance = float("-inf")
+        self.weights["build_cost"] = settings.build_cost
+        self.weights["structural_integrity"] = settings.structural_integrity
+        self.weights["car_distance"] = settings.car_distance
+        # print(f"cost: {self.weights['build_cost']}, structure: {self.weights['structural_integrity']}, car: {self.weights['car_distance']}")
 
     def start_fitness(self, beams: [Beam]):
         for beam in beams:

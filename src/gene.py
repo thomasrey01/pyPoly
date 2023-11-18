@@ -81,6 +81,7 @@ class Gene:
 
                 else:
                     self.add_segment(BeamGenome.randomSegment(self.endpoints))
+                    self._rebuild_endpoints()
 
         
             idx += 1

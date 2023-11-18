@@ -2,8 +2,8 @@ from gene import Gene
 from simulation import Simulation
 
 from pymunk import Vec2d
+import settings
 import random
-import yaml
 import joblib
 
 
@@ -49,6 +49,7 @@ class GeneticAlgorithm:
         self.filename = filename
 
         self.genes = []
+        self.best_gene = None
         self.results = {}
 
         self.anchors = []
@@ -66,13 +67,12 @@ class GeneticAlgorithm:
             self.genes.append(Gene.random_gene(num_start_segments))      
 
     def start(self):
-        with open("../genes_results.txt", 'a') as file:
-            settings = yaml.safe_load(open("../config.yaml"))
-            file.write(f"mutate chance: {settings['mutate_chance']}\n")
-            file.write(f"build cost: {settings['build_cost']}\n")
-            file.write(f"structural integrity: {settings['structural_integrity']}\n")
-            file.write(f"car distance: {settings['car_distance']}\n")
-            file.write(f"max force: {settings['max_force']}\n")
+        with open("genes_results.txt", 'a') as file:
+            file.write(f"mutate chance: {settings.mutate_chance}\n")
+            file.write(f"build cost: {settings.build_cost}\n")
+            file.write(f"structural integrity: {settings.structural_integrity}\n")
+            file.write(f"car distance: {settings.car_distance}\n")
+            file.write(f"max force: {settings.max_force}\n")
             file.write('--------------------------------\n')
         for generation in range(self.num_generations):
             self.run_generation(generation)
@@ -133,7 +133,7 @@ class GeneticAlgorithm:
             f"Generation {generation} max: {max(gen_results.values())} with gene: {sorted_gen[-1][0].to_string()}"
         )
 
-        with open("../genes_results.txt", 'a') as file:
+        with open("genes_results.txt", 'a') as file:
             file.write(f"Generation {generation} max: {max(gen_results.values())} with gene: {sorted_gen[-1][0].to_string()}\n")
 
 

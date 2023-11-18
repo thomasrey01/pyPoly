@@ -78,6 +78,7 @@ class Simulation:
         self.beam_dict = {}
         self.pivot_joints = []
         self.fitness = Fitness()
+        self.best_score = float("-inf")
 
         self.make_space()
 
@@ -262,6 +263,7 @@ class Simulation:
             self.score = self.fitness.dynamic_fitness(
                 self.sim_dt, self.level.car, self.level.goal, num_broken
             )
+                
         if self.drawing:
             self.draw()
             self.clock.tick(self.fps)
@@ -278,12 +280,7 @@ class Simulation:
 
     def end_run(self):
         self.running = False
-        if self.genetic_callback:
-            self.score = self.fitness.totalFitness
-
-            self.genetic_callback()
-        else:
-            self.score = self.fitness.totalFitness
+        self.score = self.fitness.totalFitness
 
     def draw(self):
         # Clear the screen
