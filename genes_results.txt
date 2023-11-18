@@ -1,0 +1,12 @@
+mutate chance: 0.05
+build cost: -0.0001
+structural integrity: -500
+car distance: -100
+max force: 3500000
+--------------------------------
+mutate chance: 0.05
+build cost: -0.0001
+structural integrity: -400
+car distance: -100
+max force: 3500000
+--------------------------------
