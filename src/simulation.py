@@ -78,7 +78,6 @@ class Simulation:
         self.beam_dict = {}
         self.pivot_joints = []
         self.fitness = Fitness()
-        self.best_score = float("-inf")
 
         self.make_space()
 

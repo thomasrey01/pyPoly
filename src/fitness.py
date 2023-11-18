@@ -17,7 +17,7 @@ class Fitness:
 
     def __init__(self) -> None:
         self.totalFitness = 0
-        self.car_distance = float("-inf")
+        self.car_distance = None
         self.weights["build_cost"] = settings.build_cost
         self.weights["structural_integrity"] = settings.structural_integrity
         self.weights["car_distance"] = settings.car_distance
