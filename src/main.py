@@ -19,8 +19,10 @@ def main():
             gen_alg = GeneticAlgorithm(multithreading=True, filename=filename, display_best=False)
             
             # Load previous results
-            if len(argv) >= 3 and argv[2] == '--resume':
-                gen_alg.load_genes(filename)
+            if len(argv) >= 3:
+                if argv[2] == '--resume':
+                    gen_alg.load_genes(filename)
+
 
             gen_alg.start()
 

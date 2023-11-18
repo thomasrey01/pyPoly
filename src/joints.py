@@ -1,15 +1,16 @@
 import pymunk
 from pymunk import Vec2d
 from beam import Beam
-
+import yaml
 
 class PivotJoint:
     joint: pymunk.PinJoint
     max_force: float
 
     def __init__(
-        self, space, body1: pymunk.Body, body2: pymunk.Body, point, max_force=3e6
+        self, space, body1: pymunk.Body, body2: pymunk.Body, point,
     ):
+        max_force = yaml.safe_load(open("../config.yaml"))["max_force"]
         self.max_force = max_force
         beam1_point = point - body1.position
         beam2_point = point - body2.position

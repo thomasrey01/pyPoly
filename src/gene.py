@@ -9,8 +9,6 @@ class Gene:
 
     anchors = []
 
-    mutateChance = 0.05
-
     # Endpoints of bridge segments
     endpoints: set
 
@@ -46,9 +44,10 @@ class Gene:
 
         return gene
 
-    def __init__(self):
+    def __init__(self, mutate_chance=0.05):
         self.genomes = []
         self.endpoints = set()
+        self.mutate_chance = mutate_chance
         for anchor in Gene.anchors:
             self.endpoints.add(anchor)
 
@@ -59,7 +58,7 @@ class Gene:
             self.endpoints.add(point)
 
     def _mutationOccurs(self):
-        return random.random() < self.mutateChance
+        return random.random() < self.mutate_chance
 
     def _rebuild_endpoints(self):
         self.endpoints = set()
