@@ -5,6 +5,9 @@ from beamgenome import BeamGenome
 
 
 class Builder:
+    """
+    Class that builds a bridge from a gene
+    """
     gene: Gene
 
     def __init__(self, sequence: str = ""):

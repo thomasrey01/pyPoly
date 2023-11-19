@@ -6,6 +6,9 @@ from goal import Goal
 
 
 class Car:
+    """
+    Class that represents a simple "car" in the simulation (it's just a circle that moves)
+    """
     mass = 1000
     radius = 10
     position = Vec2d(100 / 2, 200 + radius)

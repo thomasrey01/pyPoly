@@ -18,6 +18,9 @@ from fitnessrenderer import FitnessRenderer
 
 
 class Simulation:
+    """
+    Main simulation class, this directly interacts with pymunk and runs the simulation
+    """
     w:int
     h = 600
     point_spacing = 40

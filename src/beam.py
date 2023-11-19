@@ -6,6 +6,9 @@ from pymunk import Vec2d
 
 
 class Beam:
+    """
+    Beam class that represents a beam in the bridge
+    """
     material: Material
     start: Vec2d
     end: Vec2d
@@ -25,6 +28,7 @@ class Beam:
         ):
             self.start, self.end = self.end, self.start
 
+    # Create pymunk body and shape and add them to the space
     def createBody(self, space, object_list):
         length = self.start.get_distance(self.end)
 
